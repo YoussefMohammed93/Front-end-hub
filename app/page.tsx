@@ -35,12 +35,16 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { motion } from "framer-motion";
+import { useAuth } from "@clerk/nextjs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import UserButton from "@/components/UserButton";
 
 export default function Main() {
+  const user = useAuth();
+
   const faqs = [
     {
       question: "What technologies do you cover?",
@@ -118,20 +122,23 @@ export default function Main() {
                 Frontend Hub
               </motion.span>
             </Link>
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex items-center gap-2 sm:gap-4"
-            >
-              <Button
-                asChild
-                variant="outline"
-                className="rounded-full text-sm sm:text-base"
+            {user.isSignedIn ? (
+              <UserButton />
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
               >
-                <Link href="/sign-in">Sign In</Link>
-              </Button>
-            </motion.div>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="rounded-full text-sm sm:text-base"
+                >
+                  <Link href="/sign-in">Sign In</Link>
+                </Button>
+              </motion.div>
+            )}
           </div>
         </motion.header>
 
