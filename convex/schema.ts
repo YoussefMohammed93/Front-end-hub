@@ -8,6 +8,7 @@ export default defineSchema({
     imageUrl: v.optional(v.string()),
     firstName: v.optional(v.string()),
     lastName: v.optional(v.string()),
+    role: v.optional(v.string()),
   }).index("byClerkUserId", ["clerkUserId"]),
 
   blogs: defineTable({

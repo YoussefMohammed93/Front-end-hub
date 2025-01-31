@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { useAuth } from "@clerk/nextjs";
 import { useMemo, useState } from "react";
-import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +15,9 @@ import { Button } from "@/components/ui/button";
 import UserButton from "@/components/UserButton";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertTriangle, Edit, FileImage, Loader2 } from "lucide-react";
+import { useMutation, useQuery } from "convex/react";
+import { AlertTriangle, Edit, FileImage, Loader2, Undo } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -55,6 +56,7 @@ export default function CreateBlogPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const userRole = useQuery(api.users.getUserRole);
   const createBlogMutation = useMutation(api.blogs.createBlog);
 
   const Editor = useMemo(
@@ -148,6 +150,37 @@ export default function CreateBlogPage() {
       setCoverImage(file);
     }
   };
+
+  if (userRole !== "admin") {
+    return (
+      <motion.div
+        className="flex items-center justify-center h-screen"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card className="w-[400px] mx-5 text-center">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-center gap-3 text-destructive text-xl">
+              <AlertTriangle className="size-6" />
+              Access Denied
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              You do not have permission to access this page.
+            </p>
+            <Button className="mt-4">
+              <Link href="/" className="flex items-center gap-3">
+                <Undo className="size-5" />
+                Go back to home
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-background/95">

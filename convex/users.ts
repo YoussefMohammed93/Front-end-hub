@@ -32,6 +32,7 @@ export const upsertFromClerk = internalMutation({
       imageUrl: data.image_url ?? undefined,
       firstName: data.first_name ?? undefined,
       lastName: data.last_name ?? undefined,
+      role: "user",
     };
 
     const user = await userByClerkUserId(ctx, data.id);
@@ -79,3 +80,11 @@ async function userByClerkUserId(ctx: QueryCtx, clerkUserId: string) {
     .withIndex("byClerkUserId", (q) => q.eq("clerkUserId", clerkUserId))
     .unique();
 }
+
+export const getUserRole = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getCurrentUser(ctx);
+    return user?.role || "user";
+  },
+});
