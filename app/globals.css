@@ -74,3 +74,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+.bn-editor {
+  padding: 30px !important;
+}
+
+.ProseMirror.bn-editor.bn-default-styles {
+  background: #f4f4f5 !important;
+}
+
+.dark .ProseMirror.bn-editor.bn-default-styles {
+  background: #202022 !important;
+}

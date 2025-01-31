@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
 import { useEdgeStore } from "@/lib/edgestore";
 import { Button } from "@/components/ui/button";
-import UserButton from "@/components/UserButton";
+import UserButton from "@/components/user-button";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMutation, useQuery } from "convex/react";

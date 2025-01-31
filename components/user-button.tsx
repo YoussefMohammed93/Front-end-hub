@@ -14,7 +14,7 @@ import {
 } from "./ui/dropdown-menu";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import UserAvatar from "./UserAvatar";
+import UserAvatar from "./user-avatar";
 import { useTheme } from "next-themes";
 import { Separator } from "./ui/separator";
 import { useAuth, useUser } from "@clerk/nextjs";
