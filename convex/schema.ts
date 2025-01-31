@@ -26,5 +26,7 @@ export default defineSchema({
         timestamp: v.number(),
       })
     ),
-  }).index("byUserId", ["userId"]),
+  })
+    .index("byUserId", ["userId"])
+    .index("byBlogId", ["blogId"]),
 });

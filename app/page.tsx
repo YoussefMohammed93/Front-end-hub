@@ -39,8 +39,8 @@ import { useAuth } from "@clerk/nextjs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import UserButton from "@/components/UserButton";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function Main() {
   const user = useAuth();
@@ -108,19 +108,17 @@ export default function Main() {
           className="sticky top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b z-50"
         >
           <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4">
-            <Link href="/" className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-4 group">
               <motion.img
                 src="./logo.svg"
                 alt="logo"
-                className="size-8 sm:size-10"
+                className="size-10 group-hover:scale-110 transition-transform"
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 1 }}
               />
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-sky-600 bg-clip-text text-transparent"
-              >
+              <span className="text-2xl font-bold bg-gradient-to-r from-primary to-sky-600 bg-clip-text text-transparent">
                 Frontend Hub
-              </motion.span>
+              </span>
             </Link>
             {user.isSignedIn ? (
               <UserButton />
@@ -441,11 +439,11 @@ export default function Main() {
                         <Input
                           placeholder="Your Name"
                           required
-                          minLength={2}
+                          minLength={3}
                           maxLength={50}
                           pattern="[A-Za-z ]+"
                           title="Please enter a valid name (letters and spaces only)"
-                          className="bg-background"
+                          className="bg-background dark:bg-background/50"
                         />
                         <Input
                           placeholder="Your Email"
@@ -453,7 +451,7 @@ export default function Main() {
                           required
                           pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
                           title="Please enter a valid email address"
-                          className="bg-background"
+                          className="bg-background dark:bg-background/50"
                         />
                       </motion.div>
                       <motion.div
@@ -463,7 +461,7 @@ export default function Main() {
                       >
                         <Textarea
                           placeholder="Your Message"
-                          className="h-32 resize-none bg-background"
+                          className="h-32 resize-none bg-background dark:bg-background/50"
                           required
                           minLength={10}
                           maxLength={500}

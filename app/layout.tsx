@@ -1,8 +1,10 @@
 import "./globals.css";
+import { Toaster } from "sonner";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 import { ClerkProvider } from "@clerk/nextjs";
+import { EdgeStoreProvider } from "@/lib/edgestore";
 import { ConvexClientProvider } from "./convex-client-provider";
 
 const geistSans = localFont({
@@ -34,14 +36,17 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <ConvexClientProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-            </ThemeProvider>
+            <EdgeStoreProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                {children}
+                <Toaster position="bottom-right" richColors />
+              </ThemeProvider>
+            </EdgeStoreProvider>
           </ConvexClientProvider>
         </body>
       </html>
