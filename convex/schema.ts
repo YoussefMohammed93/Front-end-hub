@@ -20,9 +20,14 @@ export default defineSchema({
     userId: v.string(),
     createdAt: v.number(),
     likes: v.number(),
+    likedBy: v.optional(v.array(v.string())),
     comments: v.array(
       v.object({
+        id: v.string(),
         userId: v.string(),
+        firstName: v.string(),
+        lastName: v.string(),
+        userImage: v.optional(v.string()),
         comment: v.string(),
         timestamp: v.number(),
       })

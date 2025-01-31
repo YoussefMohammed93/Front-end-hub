@@ -12,6 +12,7 @@ export const createBlog = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
+
     if (!identity) throw new Error("User not authenticated");
 
     const user = await ctx.db
@@ -36,6 +37,7 @@ export const createBlog = mutation({
     });
 
     const blog = await ctx.db.get(documentId);
+
     if (!blog) throw new Error("Failed to create blog");
 
     return blog;
@@ -59,139 +61,130 @@ export const getBlog = query({
   },
 });
 
-// Get the most recent blogs
-export const getRecentBlogs = query({
-  handler: async (ctx) => {
-    return await ctx.db.query("blogs").order("desc").take(5);
-  },
-});
-
-// Update a blog
-export const updateBlog = mutation({
+// Like , Unlike blog
+export const toggleLike = mutation({
   args: {
-    id: v.id("blogs"),
-    title: v.optional(v.string()),
-    description: v.optional(v.string()),
-    coverImage: v.optional(v.string()),
-    content: v.optional(v.string()),
+    blogId: v.string(),
+    liked: v.boolean(),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
 
-    const blog = await ctx.db.get(args.id);
+    if (!identity) throw new Error("User not authenticated");
+
+    const userId = identity.subject;
+
+    const blog = await ctx.db
+      .query("blogs")
+      .withIndex("byBlogId", (q) => q.eq("blogId", args.blogId))
+      .unique();
+
     if (!blog) throw new Error("Blog not found");
 
-    if (blog.userId !== identity.subject) throw new Error("Unauthorized");
+    const likedBy: string[] = blog.likedBy || [];
+    const hasLiked = likedBy.includes(userId);
 
-    const { id, ...rest } = args;
-    await ctx.db.patch(id, rest);
-    return await ctx.db.get(id);
+    let newLikes = blog.likes;
+
+    if (args.liked) {
+      if (hasLiked) return blog.likes;
+      likedBy.push(userId);
+      newLikes = blog.likes + 1;
+    } else {
+      if (!hasLiked) return blog.likes;
+      const updatedLikedBy = likedBy.filter((id) => id !== userId);
+      newLikes = blog.likes - 1;
+
+      await ctx.db.patch(blog._id, {
+        likedBy: updatedLikedBy,
+        likes: newLikes,
+      });
+
+      return newLikes;
+    }
+    await ctx.db.patch(blog._id, { likedBy, likes: newLikes });
+
+    return newLikes;
   },
 });
 
-// Remove a blog
-export const removeBlog = mutation({
-  args: { id: v.id("blogs") },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
-
-    const blog = await ctx.db.get(args.id);
-    if (!blog) throw new Error("Blog not found");
-
-    if (blog.userId !== identity.subject) throw new Error("Unauthorized");
-
-    await ctx.db.delete(args.id);
-    return { success: true };
-  },
-});
-
-// Add a like to a blog
-export const addLike = mutation({
-  args: { id: v.id("blogs") },
-  handler: async (ctx, args) => {
-    const blog = await ctx.db.get(args.id);
-    if (!blog) throw new Error("Blog not found");
-
-    await ctx.db.patch(args.id, {
-      likes: (blog.likes || 0) + 1,
-    });
-
-    return await ctx.db.get(args.id);
-  },
-});
-
-// Remove a like from a blog
-export const removeLike = mutation({
-  args: { id: v.id("blogs") },
-  handler: async (ctx, args) => {
-    const blog = await ctx.db.get(args.id);
-    if (!blog) throw new Error("Blog not found");
-
-    await ctx.db.patch(args.id, {
-      likes: Math.max((blog.likes || 0) - 1, 0),
-    });
-
-    return await ctx.db.get(args.id);
-  },
-});
-
-// Add a comment to a blog
+// Add comment to blog
 export const addComment = mutation({
   args: {
-    id: v.id("blogs"),
+    blogId: v.string(),
     comment: v.string(),
+    timestamp: v.number(),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
 
-    const blog = await ctx.db.get(args.id);
+    if (!identity) throw new Error("User not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("byClerkUserId", (q) => q.eq("clerkUserId", identity.subject))
+      .unique();
+
+    if (!user) throw new Error("User not found");
+
+    const blog = await ctx.db
+      .query("blogs")
+      .withIndex("byBlogId", (q) => q.eq("blogId", args.blogId))
+      .unique();
+
     if (!blog) throw new Error("Blog not found");
 
     const newComment = {
+      id: uuidv4(),
       userId: identity.subject,
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      userImage: user.imageUrl || "",
       comment: args.comment,
-      timestamp: Date.now(),
+      timestamp: args.timestamp,
     };
 
-    await ctx.db.patch(args.id, {
-      comments: [...(blog.comments || []), newComment],
+    await ctx.db.patch(blog._id, {
+      comments: blog.comments.concat(newComment),
     });
 
-    return await ctx.db.get(args.id);
+    return newComment;
   },
 });
 
-// Remove a comment from a blog
-export const removeComment = mutation({
+// Delete comment from blog
+export const deleteComment = mutation({
   args: {
-    id: v.id("blogs"),
-    commentIdx: v.number(),
+    blogId: v.string(),
+    commentId: v.string(),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
 
-    const blog = await ctx.db.get(args.id);
+    if (!identity) throw new Error("User not authenticated");
+
+    const blog = await ctx.db
+      .query("blogs")
+      .withIndex("byBlogId", (q) => q.eq("blogId", args.blogId))
+      .unique();
+
     if (!blog) throw new Error("Blog not found");
 
-    const comments = blog.comments || [];
-    const comment = comments[args.commentIdx];
+    const commentToDelete = blog.comments.find(
+      (comment) => comment.id === args.commentId
+    );
 
-    if (!comment) throw new Error("Comment not found");
+    if (!commentToDelete) throw new Error("Comment not found");
 
-    if (
-      comment.userId !== identity.subject &&
-      blog.userId !== identity.subject
-    ) {
-      throw new Error("Unauthorized");
+    if (commentToDelete.userId !== identity.subject) {
+      throw new Error("Unauthorized: You can only delete your own comments");
     }
 
-    const newComments = comments.filter((_, idx) => idx !== args.commentIdx);
-    await ctx.db.patch(args.id, { comments: newComments });
+    const newComments = blog.comments.filter(
+      (comment) => comment.id !== args.commentId
+    );
 
-    return await ctx.db.get(args.id);
+    await ctx.db.patch(blog._id, { comments: newComments });
+    return { success: true };
   },
 });
