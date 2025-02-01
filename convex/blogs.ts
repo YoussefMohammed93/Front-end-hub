@@ -74,6 +74,21 @@ export const getBlog = query({
   },
 });
 
+// Get blogs by category
+export const getBlogsByCategory = query({
+  args: {
+    category: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const blogs = await ctx.db
+      .query("blogs")
+      .withIndex("byCategory", (q) => q.eq("category", args.category))
+      .collect();
+
+    return blogs;
+  },
+});
+
 // Like , Unlike blog
 export const toggleLike = mutation({
   args: {
