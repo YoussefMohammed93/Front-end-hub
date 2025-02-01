@@ -24,6 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { VALID_CATEGORIES } from "@/lib/constants";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -51,14 +52,6 @@ const itemVariants = {
 
 const ITEMS_PER_PAGE = 8;
 
-export const VALID_CATEGORIES = [
-  "HTML",
-  "CSS",
-  "Javascript",
-  "Tailwind CSS",
-  "React.Js",
-  "Next.Js",
-];
 
 export default function CategoryPage() {
   const params = useParams();
