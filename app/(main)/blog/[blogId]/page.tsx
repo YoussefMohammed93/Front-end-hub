@@ -257,7 +257,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
         <motion.div variants={itemVariants}>
           <motion.h1
             className="text-3xl md:text-4xl font-bold mb-6 tracking-tighter"
-            whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 200 }}
           >
             {blog.title}
@@ -283,13 +282,27 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
         </motion.div>
 
         <motion.div variants={itemVariants} className="mb-8">
-          <Card className="border-none shadow-none bg-secondary dark:bg-popover">
+          <Card className="border-none shadow-none bg-secondary dark:bg-[#202022]">
             <CardContent className="p-0 border-none shadow-none">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="px-8 pt-8"
+              >
+                <Badge
+                  variant="default"
+                  onClick={handleShare}
+                  className="cursor-pointer text-sm font-medium gap-2"
+                >
+                  {blog.category}
+                </Badge>
+              </motion.div>
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="text-base md:text-justify sm:text-lg text-muted-foreground mb-6 p-8"
+                className="text-base md:text-justify sm:text-lg text-muted-foreground p-8 pt-4"
               >
                 {blog.description}
               </motion.p>

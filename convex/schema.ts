@@ -11,6 +11,12 @@ export default defineSchema({
     role: v.optional(v.string()),
   }).index("byClerkUserId", ["clerkUserId"]),
 
+  categories: defineTable({
+    name: v.string(),
+    slug: v.string(),
+    createdAt: v.number(),
+  }).index("bySlug", ["slug"]),
+
   blogs: defineTable({
     blogId: v.string(),
     title: v.string(),
@@ -21,6 +27,7 @@ export default defineSchema({
     createdAt: v.number(),
     likes: v.number(),
     likedBy: v.optional(v.array(v.string())),
+    category: v.optional(v.string()),
     comments: v.array(
       v.object({
         id: v.string(),
@@ -34,5 +41,6 @@ export default defineSchema({
     ),
   })
     .index("byUserId", ["userId"])
-    .index("byBlogId", ["blogId"]),
+    .index("byBlogId", ["blogId"])
+    .index("byCategory", ["category"]),
 });

@@ -18,6 +18,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useMutation, useQuery } from "convex/react";
 import { AlertTriangle, Edit, FileImage, Loader2, Undo } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { MainFooter } from "@/components/footer";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -45,7 +53,6 @@ const itemVariants = {
 export default function CreateBlogPage() {
   const user = useAuth();
   const router = useRouter();
-
   const { userId } = useAuth();
   const { edgestore } = useEdgeStore();
 
@@ -53,9 +60,11 @@ export default function CreateBlogPage() {
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
   const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [category, setCategory] = useState(""); // state for blog category
   const [isDragging, setIsDragging] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // If needed, you can fetch the user role or additional data here.
   const userRole = useQuery(api.users.getUserRole);
   const createBlogMutation = useMutation(api.blogs.createBlog);
 
@@ -88,6 +97,12 @@ export default function CreateBlogPage() {
       return;
     }
 
+    if (!category) {
+      toast.error("Please select a category");
+      setIsSubmitting(false);
+      return;
+    }
+
     if (!coverImage) {
       toast.error("Please upload a cover image");
       setIsSubmitting(false);
@@ -110,6 +125,7 @@ export default function CreateBlogPage() {
         description: description.trim(),
         coverImage: coverImageUrl.url,
         content,
+        category, // pass the selected category
       });
 
       if (!blog?.blogId) {
@@ -118,10 +134,12 @@ export default function CreateBlogPage() {
 
       toast.success("Blog published successfully!");
 
+      // Clear fields
       setTitle("");
       setDescription("");
       setContent("");
       setCoverImage(null);
+      setCategory("");
 
       router.push(`/blog/${blog.blogId}`);
     } catch (error) {
@@ -255,6 +273,23 @@ export default function CreateBlogPage() {
               className="p-3 text-lg rounded-lg min-h-[120px] transition-shadow focus:ring-2 focus:ring-primary bg-background dark:bg-popover"
             />
           </motion.div>
+          {/* Category selection */}
+          <motion.div variants={itemVariants} className="space-y-3">
+            <Label className="text-lg font-semibold">Category</Label>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="p-3 rounded-lg border focus:ring-2 focus:ring-primary bg-background dark:bg-popover">
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="HTML">HTML</SelectItem>
+                <SelectItem value="CSS">CSS</SelectItem>
+                <SelectItem value="Javascript">Javascript</SelectItem>
+                <SelectItem value="Tailwind CSS">Tailwind CSS</SelectItem>
+                <SelectItem value="React.Js">React JS</SelectItem>
+                <SelectItem value="Next.Js">Next JS</SelectItem>
+              </SelectContent>
+            </Select>
+          </motion.div>
           <motion.div variants={itemVariants} className="space-y-3">
             <Label className="text-lg font-semibold">Cover Image</Label>
             <div
@@ -317,102 +352,7 @@ export default function CreateBlogPage() {
           </motion.div>
         </motion.form>
       </motion.div>
-      <motion.footer
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        className="border-t"
-      >
-        <div className="pt-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 place-items-start md:place-items-center max-w-7xl mx-auto gap-8 px-4 sm:px-6 md:px-8 text-sm">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-            >
-              <h3 className="text-lg font-semibold mb-4">Frontend Hub</h3>
-              <p className="text-muted-foreground">
-                Empowering developers with web development resources.
-              </p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-            >
-              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>
-                  <Link href="#faq" className="hover:text-primary">
-                    FAQs
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#contact" className="hover:text-primary">
-                    Contact
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/blogs" className="hover:text-primary">
-                    Blogs
-                  </Link>
-                </li>
-              </ul>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-            >
-              <h3 className="text-lg font-semibold mb-4">Resources</h3>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>
-                  <Link href="/courses" className="hover:text-primary">
-                    Courses
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/docs" className="hover:text-primary">
-                    Documentation
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/examples" className="hover:text-primary">
-                    Code Examples
-                  </Link>
-                </li>
-              </ul>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-            >
-              <h3 className="text-lg font-semibold mb-4">Connect</h3>
-              <ul className="space-y-2 text-muted-foreground">
-                <li>
-                  <Link href="/twitter" className="hover:text-primary">
-                    Linked in
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/github" className="hover:text-primary">
-                    Facebook
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/discord" className="hover:text-primary">
-                    Instagram
-                  </Link>
-                </li>
-              </ul>
-            </motion.div>
-          </div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            className="mt-8 py-4 border-t text-center text-muted-foreground"
-          >
-            © {new Date().getFullYear()} Frontend Hub, All rights reserved.
-          </motion.div>
-        </div>
-      </motion.footer>
+      <MainFooter />
     </main>
   );
 }

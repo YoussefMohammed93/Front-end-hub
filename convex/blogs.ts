@@ -9,21 +9,34 @@ export const createBlog = mutation({
     description: v.string(),
     coverImage: v.string(),
     content: v.string(),
+    category: v.string(),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-
     if (!identity) throw new Error("User not authenticated");
 
     const user = await ctx.db
       .query("users")
       .withIndex("byClerkUserId", (q) => q.eq("clerkUserId", identity.subject))
       .unique();
-
     if (!user) throw new Error("User not found");
 
-    const blogId = uuidv4();
+    let categoryEntry = await ctx.db
+      .query("categories")
+      .withIndex("bySlug", (q) => q.eq("slug", args.category))
+      .unique();
 
+    if (!categoryEntry) {
+      const newCategory = {
+        name: args.category.toUpperCase(),
+        slug: args.category,
+        createdAt: Date.now(),
+      };
+      const newCategoryId = await ctx.db.insert("categories", newCategory);
+      categoryEntry = await ctx.db.get(newCategoryId);
+    }
+
+    const blogId = uuidv4();
     const documentId = await ctx.db.insert("blogs", {
       blogId,
       title: args.title,
@@ -33,11 +46,11 @@ export const createBlog = mutation({
       userId: user._id,
       createdAt: Date.now(),
       likes: 0,
+      category: args.category,
       comments: [],
     });
 
     const blog = await ctx.db.get(documentId);
-
     if (!blog) throw new Error("Failed to create blog");
 
     return blog;
