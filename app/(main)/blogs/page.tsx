@@ -32,7 +32,7 @@ const categories = [
   },
   {
     name: "Tailwind CSS",
-    slug: "Tailwind CSS",
+    slug: "Tailwind-CSS",
     imageSrc: "/tailwind-css.png",
   },
   {

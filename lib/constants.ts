@@ -2,7 +2,7 @@ export const VALID_CATEGORIES = [
   "HTML",
   "CSS",
   "Javascript",
-  "Tailwind CSS",
+  "Tailwind-CSS",
   "React.Js",
   "Next.Js",
 ];

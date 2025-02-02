@@ -39,9 +39,9 @@ import { useAuth } from "@clerk/nextjs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { MainFooter } from "@/components/footer";
 import UserButton from "@/components/user-button";
 import { Textarea } from "@/components/ui/textarea";
-import { MainFooter } from "@/components/footer";
 
 export default function Main() {
   const user = useAuth();

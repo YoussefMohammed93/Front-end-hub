@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 "use client";
 
@@ -12,7 +13,6 @@ import {
 
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -33,6 +33,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
@@ -43,12 +44,12 @@ import { Id } from "@/convex/_generated/dataModel";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery, useMutation } from "convex/react";
+import { RandomBlogs } from "@/components/random-blogs";
 import { Card, CardContent } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { RandomBlogs } from "@/components/random-blogs";
 
 interface BlogIdPageProps {
   params: {
@@ -87,10 +88,13 @@ const commentVariants = {
 };
 
 export default function BlogIdPage({ params }: BlogIdPageProps) {
+  const router = useRouter();
   const { user } = useUser();
   const blogId = params?.blogId as string;
   const blog = useQuery(api.blogs.getBlog, { blogId });
 
+  const userRole = useQuery(api.users.getUserRole);
+  const deleteBlog = useMutation(api.blogs.deleteBlog);
   const toggleLikeMutation = useMutation(api.blogs.toggleLike);
   const addCommentMutation = useMutation(api.blogs.addComment);
   const deleteCommentMutation = useMutation(api.blogs.deleteComment);
@@ -102,6 +106,7 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
   const [commentText, setCommentText] = useState("");
   const [localLikes, setLocalLikes] = useState(blog?.likes || 0);
   const [comments, setComments] = useState(blog?.comments || []);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [expandedComments, setExpandedComments] = useState<
     Record<string, boolean>
   >({});
@@ -134,6 +139,19 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
       }
     }
   }, [blog, user]);
+
+  const handleDeleteBlog = useCallback(async () => {
+    try {
+      await deleteBlog({ blogId });
+      toast.success("Blog deleted successfully!");
+      router.push("/blogs");
+    } catch (error) {
+      console.error("Failed to delete blog:", error);
+      toast.error("Failed to delete blog");
+    } finally {
+      setIsDeleteDialogOpen(false);
+    }
+  }, [blogId, router]);
 
   const handleLike = useCallback(async () => {
     if (isLikePending) return;
@@ -255,13 +273,55 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
         variants={containerVariants}
         className="max-w-4xl mx-auto px-4 py-8"
       >
-        <motion.div variants={itemVariants}>
+        <motion.div
+          variants={itemVariants}
+          className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 sm:mb-0"
+        >
           <motion.h1
             className="text-3xl md:text-4xl font-bold mb-6 tracking-tighter"
             transition={{ type: "spring", stiffness: 200 }}
           >
             {blog.title}
           </motion.h1>
+          {userRole === "admin" && (
+            <div className="flex items-center gap-3 justify-end sm:justify-start">
+              <div>
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  onClick={() => setIsDeleteDialogOpen(true)}
+                >
+                  <Trash className="size-5" />
+                </Button>
+
+                <AlertDialog
+                  open={isDeleteDialogOpen}
+                  onOpenChange={setIsDeleteDialogOpen}
+                >
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this blog? This action
+                        cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsDeleteDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button variant="destructive" onClick={handleDeleteBlog}>
+                        Delete
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          )}
         </motion.div>
         <motion.div variants={itemVariants} className="mb-8">
           <motion.div
@@ -460,13 +520,14 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
                                           <AlertDialogCancel>
                                             Cancel
                                           </AlertDialogCancel>
-                                          <AlertDialogAction
+                                          <Button
+                                            variant="destructive"
                                             onClick={() =>
                                               handleDeleteComment(c.id)
                                             }
                                           >
                                             Delete
-                                          </AlertDialogAction>
+                                          </Button>
                                         </AlertDialogFooter>
                                       </AlertDialogContent>
                                     </AlertDialog>

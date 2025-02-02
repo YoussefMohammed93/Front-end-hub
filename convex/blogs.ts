@@ -76,8 +76,6 @@ export const getBlog = query({
       .withIndex("byBlogId", (q) => q.eq("blogId", args.blogId))
       .unique();
 
-    if (!blog) throw new Error("Blog not found");
-
     return blog;
   },
 });
@@ -222,5 +220,39 @@ export const deleteComment = mutation({
 
     await ctx.db.patch(blog._id, { comments: newComments });
     return { success: true };
+  },
+});
+
+// Delete blog from DB
+export const deleteBlog = mutation({
+  args: {
+    blogId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) throw new Error("User not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("byClerkUserId", (q) => q.eq("clerkUserId", identity.subject))
+      .unique();
+
+    if (!user) throw new Error("User not found");
+
+    const blog = await ctx.db
+      .query("blogs")
+      .withIndex("byBlogId", (q) => q.eq("blogId", args.blogId))
+      .unique();
+
+    if (!blog) throw new Error("Blog not found");
+
+    if (blog.userId.toString() !== user._id.toString()) {
+      throw new Error("Unauthorized to delete this blog");
+    }
+
+    await ctx.db.delete(blog._id);
+
+    return { success: true, message: "Blog deleted successfully" };
   },
 });
