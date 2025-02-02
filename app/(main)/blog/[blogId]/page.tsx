@@ -5,11 +5,18 @@
 import {
   Edit,
   HeartIcon,
+  Loader2,
   MessageCircleMore,
   MoreHorizontal,
   Share2,
   Trash,
 } from "lucide-react";
+
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 
 import {
   AlertDialog,
@@ -34,6 +41,8 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
@@ -88,28 +97,49 @@ const commentVariants = {
 };
 
 export default function BlogIdPage({ params }: BlogIdPageProps) {
-  const router = useRouter();
   const { user } = useUser();
+
+  const router = useRouter();
   const blogId = params?.blogId as string;
-  const blog = useQuery(api.blogs.getBlog, { blogId });
 
   const userRole = useQuery(api.users.getUserRole);
+  const blog = useQuery(api.blogs.getBlog, { blogId });
   const deleteBlog = useMutation(api.blogs.deleteBlog);
+  const updateBlog = useMutation(api.blogs.updateBlog);
   const toggleLikeMutation = useMutation(api.blogs.toggleLike);
   const addCommentMutation = useMutation(api.blogs.addComment);
   const deleteCommentMutation = useMutation(api.blogs.deleteComment);
 
+  const blogData = useQuery(api.blogs.getBlog, { blogId });
+
   const [isLiked, setIsLiked] = useState(false);
-  const [isLikePending, setIsLikePending] = useState(false);
-  const [showCommentInput, setShowCommentInput] = useState(false);
-  const [showAllComments, setShowAllComments] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const [localLikes, setLocalLikes] = useState(blog?.likes || 0);
+  const [isLikePending, setIsLikePending] = useState(false);
+  const [showAllComments, setShowAllComments] = useState(false);
   const [comments, setComments] = useState(blog?.comments || []);
+  const [localLikes, setLocalLikes] = useState(blog?.likes || 0);
+  const [showCommentInput, setShowCommentInput] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(blog?.title || "");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editedContent, setEditedContent] = useState(blog?.content || "");
+  const [editedCategory, setEditedCategory] = useState(blog?.category || "");
+  const [editedDescription, setEditedDescription] = useState(
+    blog?.description || ""
+  );
   const [expandedComments, setExpandedComments] = useState<
     Record<string, boolean>
   >({});
+
+  const Editor = useMemo(
+    () =>
+      dynamic(() => import("@/components/editor"), {
+        ssr: false,
+        loading: () => <Skeleton className="h-40 w-full" />,
+      }),
+    []
+  );
 
   const sortedComments = useMemo(
     () => [...comments].sort((a, b) => b.timestamp - a.timestamp),
@@ -121,15 +151,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
     [showAllComments, sortedComments]
   );
 
-  const Editor = useMemo(
-    () =>
-      dynamic(() => import("@/components/editor"), {
-        ssr: false,
-        loading: () => <Skeleton className="h-40 w-full" />,
-      }),
-    []
-  );
-
   useEffect(() => {
     if (blog) {
       setLocalLikes(blog.likes);
@@ -139,6 +160,15 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
       }
     }
   }, [blog, user]);
+
+  useEffect(() => {
+    if (blog) {
+      setEditedTitle(blog.title);
+      setEditedDescription(blog.description);
+      setEditedCategory(blog.category || "");
+      setEditedContent(blog.content);
+    }
+  }, [blog]);
 
   const handleDeleteBlog = useCallback(async () => {
     try {
@@ -218,6 +248,29 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
     }
   }, [blogId, commentText, user, addCommentMutation]);
 
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await updateBlog({
+        blogId,
+        title: editedTitle,
+        description: editedDescription,
+        content: editedContent,
+        category: editedCategory,
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      toast.success("Blog updated successfully");
+      setIsEditDialogOpen(false);
+    } catch (error) {
+      toast.error("Failed to update blog");
+      console.error(error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleDeleteComment = useCallback(
     async (commentId: string) => {
       try {
@@ -250,18 +303,7 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
   }, []);
 
   if (!blog) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-8 mt-20">
-        <div className="space-y-8">
-          <Skeleton className="h-12 w-3/4" />
-          <Skeleton className="h-[320px] w-full" />
-          <div className="space-y-4">
-            <Skeleton className="h-6 w-1/2" />
-            <Skeleton className="h-40 w-full" />
-          </div>
-        </div>
-      </div>
-    );
+    return <BlogSkeleton />;
   }
 
   return (
@@ -286,19 +328,25 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
           {userRole === "admin" && (
             <div className="flex items-center gap-3 justify-end sm:justify-start">
               <div>
-                <Button
-                  size="icon"
-                  variant="destructive"
-                  onClick={() => setIsDeleteDialogOpen(true)}
-                >
-                  <Trash className="size-5" />
-                </Button>
-
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                    >
+                      <Trash className="size-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="text-sm">
+                    Delete Blog
+                  </TooltipContent>
+                </Tooltip>
                 <AlertDialog
                   open={isDeleteDialogOpen}
                   onOpenChange={setIsDeleteDialogOpen}
                 >
-                  <AlertDialogContent>
+                  <AlertDialogContent className="max-w-[370px] sm:max-w-lg">
                     <AlertDialogHeader>
                       <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
                       <AlertDialogDescription>
@@ -315,6 +363,110 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
                       </Button>
                       <Button variant="destructive" onClick={handleDeleteBlog}>
                         Delete
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+              <div className="flex items-center gap-3 justify-end sm:justify-start">
+                <AlertDialog
+                  open={isEditDialogOpen}
+                  onOpenChange={setIsEditDialogOpen}
+                >
+                  <AlertDialogTrigger asChild>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          onClick={() => setIsEditDialogOpen(true)}
+                        >
+                          <Edit className="size-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="text-sm">
+                        Edit Blog
+                      </TooltipContent>
+                    </Tooltip>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="max-w-[370px] sm:max-w-3xl max-h-[600px] overflow-x-auto">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Edit Blog</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Make changes to the blog post below.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label
+                          htmlFor="title"
+                          className="text-sm font-medium mb-1"
+                        >
+                          Title
+                        </Label>
+                        <Input
+                          id="title"
+                          type="text"
+                          value={editedTitle}
+                          onChange={(e) => setEditedTitle(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label
+                          htmlFor="description"
+                          className="text-sm font-medium mb-1"
+                        >
+                          Description
+                        </Label>
+                        <Textarea
+                          id="description"
+                          value={editedDescription}
+                          onChange={(e) => setEditedDescription(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label
+                          htmlFor="category"
+                          className="text-sm font-medium mb-1"
+                        >
+                          Category
+                        </Label>
+                        <Input
+                          id="category"
+                          type="text"
+                          value={editedCategory}
+                          onChange={(e) => setEditedCategory(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label
+                          htmlFor="content"
+                          className="text-sm font-medium mb-1"
+                        >
+                          Content
+                        </Label>
+                        <Editor
+                          editable={true}
+                          onChange={(content) => setEditedContent(content)}
+                          initialContent={editedContent}
+                        />
+                      </div>
+                    </div>
+                    <AlertDialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsEditDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button onClick={handleSave} disabled={isSaving}>
+                        {isSaving ? (
+                          <span className="flex items-center gap-2">
+                            <Loader2 className="animate-spin size-5" /> Saving
+                          </span>
+                        ) : (
+                          "Save Changes"
+                        )}
                       </Button>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -371,34 +523,57 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
               >
-                <Editor
-                  editable={false}
-                  onChange={() => {}}
-                  initialContent={blog.content}
-                />
+                <motion.div
+                  className="max-w-full prose dark:prose-invert bg-secondary rounded-xl"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <Editor
+                    key={blog.content}
+                    editable={false}
+                    onChange={() => {}}
+                    initialContent={blog.content}
+                  />
+                </motion.div>
               </motion.div>
             </CardContent>
           </Card>
         </motion.div>
+        <motion.div className="flex items-center gap-3 border-b pb-4">
+          <Avatar className="h-12 w-12">
+            <AvatarImage src={blogData?.user?.imageUrl} />
+            <AvatarFallback>
+              {blogData?.user?.firstName?.[0] ?? ""}
+              {blogData?.user?.lastName?.[0] ?? ""}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <h2 className="text-lg sm:text-xl font-semibold">
+              {blogData?.user?.firstName} {blogData?.user?.lastName}
+            </h2>
+            <p className="text-muted-foreground">Frontend developer</p>
+          </div>
+        </motion.div>
         <motion.div
           variants={itemVariants}
-          className="flex items-center justify-end gap-3 pb-4"
+          className="flex items-center justify-end gap-3 pb-4 pt-7"
         >
           <motion.div>
             <Badge
-              variant="secondary"
+              variant="outline"
               onClick={handleLike}
-              className={`cursor-pointer px-4 py-2 text-sm font-medium gap-2 ${isLiked ? "text-red-500" : ""}`}
+              className={`cursor-pointer px-4 py-2 text-sm font-medium gap-2 hover:bg-secondary ${isLiked ? "text-red-500" : ""}`}
             >
-              <HeartIcon className="size-4" />
+              <HeartIcon className={`size-4 ${isLiked && "fill-current"}`} />
               <span>{localLikes}</span>
             </Badge>
           </motion.div>
           <motion.div>
             <Badge
-              variant="secondary"
+              variant="outline"
               onClick={handleCommentClick}
-              className="cursor-pointer px-4 py-2 text-sm font-medium gap-2"
+              className="cursor-pointer px-4 py-2 text-sm font-medium gap-2 hover:bg-secondary"
             >
               <MessageCircleMore className="size-4" />
               <span>{comments.length}</span>
@@ -406,9 +581,9 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
           </motion.div>
           <motion.div>
             <Badge
-              variant="secondary"
+              variant="outline"
               onClick={handleShare}
-              className="cursor-pointer px-5 py-2.5 text-sm font-medium gap-2"
+              className="cursor-pointer px-5 py-2.5 text-sm font-medium gap-2 hover:bg-secondary"
             >
               <Share2 className="size-4" />
             </Badge>
@@ -489,7 +664,7 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button
-                                    variant="ghost"
+                                    variant="outline"
                                     size="icon"
                                     className="ml-auto opacity-0 group-hover:opacity-100"
                                   >
@@ -513,7 +688,7 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
                                           </AlertDialogTitle>
                                           <AlertDialogDescription>
                                             This will permanently delete this
-                                            comment from the post.
+                                            comment from the blog.
                                           </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
@@ -540,7 +715,7 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
                             {expandedComments[c.id]
                               ? c.comment
                               : c.comment.length > 220
-                                ? `${c.comment.substring(0, 220)}.......`
+                                ? `${c.comment.substring(0, 220)}......`
                                 : c.comment}
                             {c.comment.length > 220 && (
                               <Button
@@ -585,6 +760,21 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
       </motion.div>
       <RandomBlogs />
       <MainFooter />
+    </div>
+  );
+}
+
+function BlogSkeleton() {
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-8 mt-20">
+      <div className="space-y-8">
+        <Skeleton className="h-12 w-3/4" />
+        <Skeleton className="h-[320px] w-full" />
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-1/2" />
+          <Skeleton className="h-40 w-full" />
+        </div>
+      </div>
     </div>
   );
 }

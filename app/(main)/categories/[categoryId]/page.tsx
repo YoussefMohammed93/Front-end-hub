@@ -12,7 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Heart } from "lucide-react";
+import { Clock, Heart } from "lucide-react";
 import { useQuery } from "convex/react";
 import { useState, useEffect } from "react";
 import { api } from "@/convex/_generated/api";
@@ -20,11 +20,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MainHeader } from "@/components/header";
 import { MainFooter } from "@/components/footer";
+import { VALID_CATEGORIES } from "@/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { VALID_CATEGORIES } from "@/lib/constants";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -51,7 +51,6 @@ const itemVariants = {
 };
 
 const ITEMS_PER_PAGE = 8;
-
 
 export default function CategoryPage() {
   const params = useParams();
@@ -175,7 +174,6 @@ export default function CategoryPage() {
                             {blog.category}
                           </Badge>
                         </CardHeader>
-
                         <CardContent className="p-4 space-y-2">
                           <motion.div
                             animate={{ scale: 1 }}
@@ -185,7 +183,6 @@ export default function CategoryPage() {
                               {blog.title}
                             </CardTitle>
                           </motion.div>
-
                           <motion.div
                             initial={{ opacity: 0.8 }}
                             whileHover={{ opacity: 1 }}
@@ -194,11 +191,16 @@ export default function CategoryPage() {
                               {blog.description}
                             </p>
                           </motion.div>
-
                           <div className="flex items-center justify-between text-sm text-muted-foreground mt-4">
-                            <span className="font-medium text-foreground/80">
-                              {format(new Date(blog.createdAt), "MMM dd, yyyy")}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <Clock className="size-4" />
+                              <span className="font-medium text-foreground/80">
+                                {format(
+                                  new Date(blog.createdAt),
+                                  "MMM dd, yyyy"
+                                )}
+                              </span>
+                            </div>
                             <Badge
                               variant="secondary"
                               className="flex items-center gap-2"

@@ -76,7 +76,13 @@ export const getBlog = query({
       .withIndex("byBlogId", (q) => q.eq("blogId", args.blogId))
       .unique();
 
-    return blog;
+    if (!blog) return null;
+
+    const userId = ctx.db.normalizeId("users", blog.userId);
+
+    const user = userId ? await ctx.db.get(userId) : null;
+
+    return { ...blog, user };
   },
 });
 
@@ -254,5 +260,59 @@ export const deleteBlog = mutation({
     await ctx.db.delete(blog._id);
 
     return { success: true, message: "Blog deleted successfully" };
+  },
+});
+
+// Update blog
+export const updateBlog = mutation({
+  args: {
+    blogId: v.string(),
+    title: v.string(),
+    description: v.string(),
+    content: v.string(),
+    category: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) throw new Error("User not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("byClerkUserId", (q) => q.eq("clerkUserId", identity.subject))
+      .unique();
+
+    if (!user || user.role !== "admin") throw new Error("Unauthorized");
+
+    const blog = await ctx.db
+      .query("blogs")
+      .withIndex("byBlogId", (q) => q.eq("blogId", args.blogId))
+      .unique();
+
+    if (!blog) throw new Error("Blog not found");
+
+    let categoryEntry = await ctx.db
+      .query("categories")
+      .withIndex("bySlug", (q) => q.eq("slug", args.category))
+      .unique();
+
+    if (!categoryEntry) {
+      const newCategoryId = await ctx.db.insert("categories", {
+        name: args.category.toUpperCase(),
+        slug: args.category,
+        createdAt: Date.now(),
+      });
+
+      categoryEntry = await ctx.db.get(newCategoryId);
+    }
+
+    await ctx.db.patch(blog._id, {
+      title: args.title,
+      description: args.description,
+      content: args.content,
+      category: args.category,
+    });
+
+    return ctx.db.get(blog._id);
   },
 });

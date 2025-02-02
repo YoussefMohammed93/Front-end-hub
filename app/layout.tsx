@@ -5,6 +5,7 @@ import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 import { ClerkProvider } from "@clerk/nextjs";
 import { EdgeStoreProvider } from "@/lib/edgestore";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConvexClientProvider } from "./convex-client-provider";
 
 const geistSans = localFont({
@@ -38,12 +39,12 @@ export default function RootLayout({
           <ConvexClientProvider>
             <EdgeStoreProvider>
               <ThemeProvider
+                enableSystem
                 attribute="class"
                 defaultTheme="system"
-                enableSystem
                 disableTransitionOnChange
               >
-                {children}
+                <TooltipProvider>{children}</TooltipProvider>
                 <Toaster position="bottom-right" richColors />
               </ThemeProvider>
             </EdgeStoreProvider>

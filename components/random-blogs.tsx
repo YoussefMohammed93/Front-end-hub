@@ -4,10 +4,9 @@ import { format } from "date-fns";
 import { Badge } from "./ui/badge";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Heart, Loader2 } from "lucide-react";
+import { Clock, Heart, Loader2 } from "lucide-react";
 import React, { useRef, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 export const RandomBlogs = () => {
   const allBlogs = useQuery(api.blogs.getAllBlogs, {});
@@ -74,27 +73,23 @@ export const RandomBlogs = () => {
                     </Badge>
                   </CardHeader>
                   <CardContent className="p-4 space-y-2">
-                    <HoverCard>
-                      <HoverCardTrigger asChild>
-                        <div className="w-full cursor-pointer">
-                          <CardTitle className="line-clamp-1 text-lg font-semibold relative z-10">
-                            {blog.title}
-                          </CardTitle>
-                        </div>
-                      </HoverCardTrigger>
-                      <HoverCardContent className="w-auto max-w-sm">
-                        <p className="text-sm font-medium">{blog.title}</p>
-                      </HoverCardContent>
-                    </HoverCard>
+                    <div className="w-full cursor-pointer">
+                      <CardTitle className="line-clamp-1 text-lg font-semibold relative z-10">
+                        {blog.title}
+                      </CardTitle>
+                    </div>
                     <div>
                       <p className="text-muted-foreground line-clamp-3 text-sm relative z-10">
                         {blog.description}
                       </p>
                     </div>
                     <div className="flex items-center justify-between text-sm text-muted-foreground mt-4">
-                      <span className="font-medium text-foreground/80">
-                        {format(new Date(blog.createdAt), "MMM dd, yyyy")}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <Clock className="size-4" />
+                        <span className="font-medium text-foreground/80">
+                          {format(new Date(blog.createdAt), "MMM dd, yyyy")}
+                        </span>
+                      </div>
                       <Badge
                         variant="secondary"
                         className="flex items-center gap-2"

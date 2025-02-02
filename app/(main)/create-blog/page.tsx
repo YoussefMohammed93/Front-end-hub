@@ -282,7 +282,7 @@ export default function CreateBlogPage() {
                 <SelectItem value="HTML">HTML</SelectItem>
                 <SelectItem value="CSS">CSS</SelectItem>
                 <SelectItem value="Javascript">Javascript</SelectItem>
-                <SelectItem value="Tailwind CSS">Tailwind CSS</SelectItem>
+                <SelectItem value="Tailwind-CSS">Tailwind CSS</SelectItem>
                 <SelectItem value="React.Js">React JS</SelectItem>
                 <SelectItem value="Next.Js">Next JS</SelectItem>
               </SelectContent>
