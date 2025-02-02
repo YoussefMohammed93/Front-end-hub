@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import Link from "next/link";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
@@ -12,20 +20,13 @@ import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
 import { useEdgeStore } from "@/lib/edgestore";
 import { Button } from "@/components/ui/button";
+import { MainFooter } from "@/components/footer";
 import UserButton from "@/components/user-button";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMutation, useQuery } from "convex/react";
 import { AlertTriangle, Edit, FileImage, Loader2, Undo } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { MainFooter } from "@/components/footer";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -60,11 +61,10 @@ export default function CreateBlogPage() {
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
   const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [category, setCategory] = useState(""); // state for blog category
+  const [category, setCategory] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // If needed, you can fetch the user role or additional data here.
   const userRole = useQuery(api.users.getUserRole);
   const createBlogMutation = useMutation(api.blogs.createBlog);
 
@@ -125,7 +125,7 @@ export default function CreateBlogPage() {
         description: description.trim(),
         coverImage: coverImageUrl.url,
         content,
-        category, // pass the selected category
+        category,
       });
 
       if (!blog?.blogId) {
@@ -134,7 +134,6 @@ export default function CreateBlogPage() {
 
       toast.success("Blog published successfully!");
 
-      // Clear fields
       setTitle("");
       setDescription("");
       setContent("");
@@ -273,7 +272,6 @@ export default function CreateBlogPage() {
               className="p-3 text-lg rounded-lg min-h-[120px] transition-shadow focus:ring-2 focus:ring-primary bg-background dark:bg-popover"
             />
           </motion.div>
-          {/* Category selection */}
           <motion.div variants={itemVariants} className="space-y-3">
             <Label className="text-lg font-semibold">Category</Label>
             <Select value={category} onValueChange={setCategory}>
@@ -322,7 +320,7 @@ export default function CreateBlogPage() {
                 </p>
               )}
               {coverImage && coverImage.size > 5 * 1024 * 1024 && (
-                <div className="flex items-center gap-2 text-sm text-destructive mt-2 justify-center">
+                <div className="flex items-center gap-2 text-sm text-red-500 mt-2 justify-center">
                   <AlertTriangle className="size-5" />
                   <p>Image must be less than 5MB</p>
                 </div>

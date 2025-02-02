@@ -57,6 +57,14 @@ export const createBlog = mutation({
   },
 });
 
+// Get all blogs
+export const getAllBlogs = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("blogs").collect();
+  },
+});
+
 // Get a blog by ID
 export const getBlog = query({
   args: {

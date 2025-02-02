@@ -48,6 +48,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { RandomBlogs } from "@/components/random-blogs";
 
 interface BlogIdPageProps {
   params: {
@@ -262,7 +263,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
             {blog.title}
           </motion.h1>
         </motion.div>
-
         <motion.div variants={itemVariants} className="mb-8">
           <motion.div
             className="relative w-full rounded-lg overflow-hidden"
@@ -280,7 +280,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
             </AspectRatio>
           </motion.div>
         </motion.div>
-
         <motion.div variants={itemVariants} className="mb-8">
           <Card className="border-none shadow-none bg-secondary dark:bg-[#202022]">
             <CardContent className="p-0 border-none shadow-none">
@@ -321,7 +320,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
             </CardContent>
           </Card>
         </motion.div>
-
         <motion.div
           variants={itemVariants}
           className="flex items-center justify-end gap-3 pb-4"
@@ -336,7 +334,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
               <span>{localLikes}</span>
             </Badge>
           </motion.div>
-
           <motion.div>
             <Badge
               variant="secondary"
@@ -347,7 +344,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
               <span>{comments.length}</span>
             </Badge>
           </motion.div>
-
           <motion.div>
             <Badge
               variant="secondary"
@@ -358,7 +354,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
             </Badge>
           </motion.div>
         </motion.div>
-
         <AnimatePresence>
           {showCommentInput && (
             <motion.div
@@ -395,7 +390,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
             </motion.div>
           )}
         </AnimatePresence>
-
         {comments.length > 0 && (
           <motion.div className="mt-4 space-y-2">
             <LayoutGroup>
@@ -419,7 +413,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
                             {c.lastName[0]}
                           </AvatarFallback>
                         </Avatar>
-
                         <div className="flex-1 space-y-1">
                           <div className="flex items-center gap-2">
                             <div className="flex items-baseline gap-2">
@@ -432,7 +425,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
                                 })}
                               </span>
                             </div>
-
                             {user?.id === c.userId && (
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -483,14 +475,12 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
                               </DropdownMenu>
                             )}
                           </div>
-
                           <p className="text-sm text-foreground">
                             {expandedComments[c.id]
                               ? c.comment
                               : c.comment.length > 220
-                                ? `${c.comment.substring(0, 220)}..........`
+                                ? `${c.comment.substring(0, 220)}.......`
                                 : c.comment}
-
                             {c.comment.length > 220 && (
                               <Button
                                 variant="link"
@@ -511,7 +501,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
                 ))}
               </AnimatePresence>
             </LayoutGroup>
-
             {comments.length > 3 && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -533,6 +522,7 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
           </motion.div>
         )}
       </motion.div>
+      <RandomBlogs />
       <MainFooter />
     </div>
   );

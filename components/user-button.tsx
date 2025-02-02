@@ -1,6 +1,15 @@
 "use client";
 
 import {
+  Check,
+  Edit,
+  LogOut,
+  Monitor,
+  Moon,
+  Sun,
+  UserIcon,
+} from "lucide-react";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -16,9 +25,10 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import UserAvatar from "./user-avatar";
 import { useTheme } from "next-themes";
+import { useQuery } from "convex/react";
 import { Separator } from "./ui/separator";
+import { api } from "@/convex/_generated/api";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { Check, LogOut, Monitor, Moon, Sun, UserIcon } from "lucide-react";
 
 interface UserButtonProps {
   className?: string;
@@ -27,6 +37,7 @@ interface UserButtonProps {
 export default function UserButton({ className }: UserButtonProps) {
   const currentUser = useUser();
   const { theme, setTheme } = useTheme();
+  const userRole = useQuery(api.users.getUserRole);
 
   const auth = useAuth();
 
@@ -52,6 +63,14 @@ export default function UserButton({ className }: UserButtonProps) {
             Profile
           </DropdownMenuItem>
         </Link>
+        {userRole === "admin" && (
+          <Link href="/create-blog">
+            <DropdownMenuItem>
+              <Edit className="mr-2 size-4" />
+              Create blog
+            </DropdownMenuItem>
+          </Link>
+        )}
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <Monitor className="mr-2 size-4" />
