@@ -7,6 +7,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { EdgeStoreProvider } from "@/lib/edgestore";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConvexClientProvider } from "./convex-client-provider";
+import ScrollButton from "@/components/scroll-button";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -45,6 +46,7 @@ export default function RootLayout({
                 disableTransitionOnChange
               >
                 <TooltipProvider>{children}</TooltipProvider>
+                <ScrollButton />
                 <Toaster position="bottom-right" richColors />
               </ThemeProvider>
             </EdgeStoreProvider>
