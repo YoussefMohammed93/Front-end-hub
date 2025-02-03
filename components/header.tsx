@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NavMenu } from "./nav";
 import { Button } from "./ui/button";
 import { motion } from "framer-motion";
 import UserButton from "./user-button";
@@ -27,23 +28,28 @@ export const MainHeader = () => {
             Frontend Hub
           </span>
         </Link>
-        {user.isSignedIn ? (
-          <UserButton />
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Button
-              asChild
-              variant="outline"
-              className="rounded-full text-sm sm:text-base"
-            >
-              <Link href="/sign-in">Sign In</Link>
-            </Button>
-          </motion.div>
-        )}
+        <div className="flex items-center gap-5">
+          <NavMenu />
+          <>
+            {user.isSignedIn ? (
+              <UserButton />
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Button
+                  asChild
+                  variant="outline"
+                  className="rounded-full text-sm sm:text-base"
+                >
+                  <Link href="/sign-in">Sign In</Link>
+                </Button>
+              </motion.div>
+            )}
+          </>
+        </div>
       </div>
     </motion.header>
   );

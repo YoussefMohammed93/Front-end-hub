@@ -86,3 +86,9 @@
 .dark .ProseMirror.bn-editor.bn-default-styles {
   background: #202022 !important;
 }
+
+@media (min-width: 1600px) {
+  .vector-2 {
+    bottom: -850px;
+  }
+}

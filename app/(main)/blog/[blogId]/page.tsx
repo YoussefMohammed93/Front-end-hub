@@ -389,7 +389,7 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
                       </TooltipContent>
                     </Tooltip>
                   </AlertDialogTrigger>
-                  <AlertDialogContent className="max-w-[370px] sm:max-w-3xl max-h-[600px] overflow-x-auto">
+                  <AlertDialogContent className="max-w-[370px] sm:max-w-fit max-h-[600px] overflow-x-auto">
                     <AlertDialogHeader>
                       <AlertDialogTitle>Edit Blog</AlertDialogTitle>
                       <AlertDialogDescription>
@@ -598,7 +598,7 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
               className="mt-4"
             >
               <Textarea
-                className="w-full p-3 border rounded-md resize-none"
+                className="w-full p-3 border rounded-md resize-none dark:border-secondary dark:bg-popover"
                 placeholder="Write your comment..."
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}

@@ -7,6 +7,7 @@ import {
   FiMessageSquare,
   FiRefreshCcw,
 } from "react-icons/fi";
+
 import {
   SiReact,
   SiNextdotjs,
@@ -20,7 +21,10 @@ import {
   SiH3,
   SiMonica,
 } from "react-icons/si";
+
 import Link from "next/link";
+import Image from "next/image";
+
 import {
   Card,
   CardHeader,
@@ -28,24 +32,23 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
+
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+
 import { motion } from "framer-motion";
-import { useAuth } from "@clerk/nextjs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MainFooter } from "@/components/footer";
-import UserButton from "@/components/user-button";
+import { MainHeader } from "@/components/header";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function Main() {
-  const user = useAuth();
-
   const faqs = [
     {
       question: "What technologies do you cover?",
@@ -99,47 +102,41 @@ export default function Main() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen relative flex flex-col">
+      {/* Vectors */}
+      <div className="relative hidden md:block">
+        <motion.div
+          initial={{ opacity: 0, x: -50, y: 250 }}
+          animate={{ opacity: 1, x: 0, y: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="absolute left-0 top-0 sm:top-16"
+        >
+          <Image
+            src="/vector.png"
+            width={200}
+            height={200}
+            alt="vector"
+            className="opacity-10 sm:opacity-20"
+          />
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: 0, y: -250 }}
+          animate={{ opacity: 1, x: 0, y: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="absolute right-0 -bottom-[700px] vector-2"
+        >
+          <Image
+            src="/vector.png"
+            width={200}
+            height={200}
+            alt="vector"
+            className="opacity-10 sm:opacity-20 rotate-180"
+          />
+        </motion.div>
+      </div>
       <div className="bg-background">
         {/* Header */}
-        <motion.header
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="sticky top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b z-50"
-        >
-          <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4">
-            <Link href="/" className="flex items-center gap-4 group">
-              <motion.img
-                src="./logo.svg"
-                alt="logo"
-                className="size-10 group-hover:scale-110 transition-transform"
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 1 }}
-              />
-              <span className="text-2xl font-bold bg-gradient-to-r from-primary to-sky-600 bg-clip-text text-transparent">
-                Frontend Hub
-              </span>
-            </Link>
-            {user.isSignedIn ? (
-              <UserButton />
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <Button
-                  asChild
-                  variant="outline"
-                  className="rounded-full text-sm sm:text-base"
-                >
-                  <Link href="/sign-in">Sign In</Link>
-                </Button>
-              </motion.div>
-            )}
-          </div>
-        </motion.header>
+        <MainHeader />
 
         <main className="flex-1 bg-background overflow-x-hidden">
           {/* Hero Section */}
