@@ -43,4 +43,16 @@ export default defineSchema({
     .index("byUserId", ["userId"])
     .index("byBlogId", ["blogId"])
     .index("byCategory", ["category"]),
+
+  docs: defineTable({
+    docId: v.string(),
+    title: v.string(),
+    category: v.string(),
+    content: v.string(),
+    userId: v.string(),
+    createdAt: v.number(),
+  })
+    .index("byUserId", ["userId"])
+    .index("byDocId", ["docId"])
+    .index("byCategory", ["category"]),
 });
