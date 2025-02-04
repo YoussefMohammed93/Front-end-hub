@@ -1,11 +1,16 @@
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export const DocumentationLogo = () => {
   return (
-    <Link href="/">
-      <span className="text-2xl font-bold bg-gradient-to-r from-primary to-sky-600 bg-clip-text text-transparent">
-        Frontend Hub
-      </span>
+    <Link href="/" className="flex items-center gap-4 group">
+      <motion.img
+        src="/logo.svg"
+        alt="logo"
+        className="size-10 group-hover:scale-110 transition-transform"
+        whileHover={{ rotate: 360 }}
+        transition={{ duration: 1 }}
+      />
     </Link>
   );
 };

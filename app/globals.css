@@ -108,3 +108,19 @@
     bottom: -850px;
   }
 }
+
+[cmdk-root] {
+  @apply bg-background;
+}
+[cmdk-input] {
+  @apply h-12 w-full bg-transparent outline-none placeholder:text-muted-foreground;
+}
+[cmdk-list] {
+  @apply max-h-[300px] overflow-y-auto;
+}
+[cmdk-item] {
+  @apply cursor-pointer px-4 py-2 text-sm hover:bg-accent aria-selected:bg-accent;
+}
+[cmdk-group-heading] {
+  @apply px-4 py-2 text-xs font-medium text-muted-foreground;
+}

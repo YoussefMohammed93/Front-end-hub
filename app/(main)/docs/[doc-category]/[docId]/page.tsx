@@ -1,15 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { toast } from "sonner";
+
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+} from "@/components/ui/alert-dialog";
+
 import dynamic from "next/dynamic";
-import { useQuery } from "convex/react";
-import { notFound } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { MainFooter } from "@/components/footer";
+import { useQuery, useMutation } from "convex/react";
+import { notFound, useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Edit, Trash } from "lucide-react";
 
 interface DocumentPageProps {
   params: {
@@ -30,9 +43,22 @@ const Editor = dynamic(() => import("@/components/editor"), {
 });
 
 export default function DocumentPage({ params }: DocumentPageProps) {
+  const router = useRouter();
   const { docId, "doc-category": category } = params;
+
+  const userRole = useQuery(api.users.getUserRole);
+
   const doc = useQuery(api.docs.getDoc, { docId });
   const allDocs = useQuery(api.docs.getAllDocs);
+
+  const updateDoc = useMutation(api.docs.updateDoc);
+  const deleteDoc = useMutation(api.docs.deleteDoc);
+
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editedTitle, setEditedTitle] = useState("");
+  const [editedContent, setEditedContent] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (doc && doc.category.toLowerCase() !== category.toLowerCase()) {
@@ -40,10 +66,16 @@ export default function DocumentPage({ params }: DocumentPageProps) {
     }
   }, [doc, category]);
 
+  useEffect(() => {
+    if (doc) {
+      setEditedTitle(doc.title);
+      setEditedContent(doc.content);
+    }
+  }, [doc]);
+
   if (doc === undefined) {
     return <LoadingSpinner />;
   }
-
   if (!doc) {
     notFound();
   }
@@ -59,14 +91,157 @@ export default function DocumentPage({ params }: DocumentPageProps) {
       ? currentCategoryDocs[currentIndex + 1]
       : null;
 
+  const handleDeleteDoc = async () => {
+    try {
+      await deleteDoc({ docId });
+
+      toast.success("Document deleted successfully!");
+      router.push("/");
+    } catch (error) {
+      console.error("Failed to delete document:", error);
+      toast.error("Failed to delete document");
+    } finally {
+      setIsDeleteDialogOpen(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await updateDoc({
+        docId,
+        title: editedTitle,
+        content: editedContent,
+      });
+
+      toast.success("Document updated successfully!");
+      setIsEditDialogOpen(false);
+    } catch (error) {
+      console.error("Failed to update document:", error);
+      toast.error("Failed to update document");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="bg-background">
       <div className="px-3 max-w-7xl mx-auto">
-        <div className="mb-8">
+        <div className="mb-8 flex justify-between items-center">
           <h1 className="text-5xl font-bold text-[#3f3f3f] dark:text-[#cfcfcf] tracking-tighter">
             {doc.title}
           </h1>
+          {userRole === "admin" && (
+            <div className="flex gap-2">
+              <AlertDialog
+                open={isEditDialogOpen}
+                onOpenChange={setIsEditDialogOpen}
+              >
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsEditDialogOpen(true)}
+                  >
+                    <Edit />
+                    Edit
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="max-w-[370px] sm:max-w-fit max-h-[600px] overflow-x-auto">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Edit Document</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Update the title and content of your document.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="space-y-4 my-4">
+                    <div>
+                      <label
+                        className="text-sm font-medium mb-1"
+                        htmlFor="doc-title"
+                      >
+                        Title
+                      </label>
+                      <Input
+                        id="doc-title"
+                        type="text"
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className="text-sm font-medium mb-1"
+                        htmlFor="doc-content"
+                      >
+                        Content
+                      </label>
+                      {/* Reuse your Editor component in edit mode */}
+                      <Editor
+                        editable={true}
+                        onChange={(content) => setEditedContent(content)}
+                        initialContent={editedContent}
+                      />
+                    </div>
+                  </div>
+                  <AlertDialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsEditDialogOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSave} disabled={isSaving}>
+                      {isSaving ? (
+                        <span className="flex items-center gap-2">
+                          <Loader2 className="animate-spin" /> Saving...
+                        </span>
+                      ) : (
+                        "Save Changes"
+                      )}
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
+              {/* Delete Button */}
+              <AlertDialog
+                open={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+              >
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                  >
+                    <Trash />
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="max-w-[370px] sm:max-w-lg">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete this document? This action
+                      cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsDeleteDialogOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button variant="destructive" onClick={handleDeleteDoc}>
+                      Delete
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )}
         </div>
+
         <div className="mb-8">
           <Card className="border-none shadow-none">
             <CardContent className="p-0">
@@ -81,20 +256,18 @@ export default function DocumentPage({ params }: DocumentPageProps) {
             </CardContent>
           </Card>
         </div>
+
         <div className="flex justify-between gap-4 mb-8 flex-wrap">
           <div>
             {previousDoc ? (
               <Link href={`/docs/${previousDoc.category}/${previousDoc.docId}`}>
-                <Button
-                  variant="outline"
-                  className="text-left dark:bg-popover dark:hover:bg-secondary"
-                >
+                <Button variant="default" className="text-left">
                   <ArrowLeft />
                   Previous
                 </Button>
               </Link>
             ) : (
-              <Button variant="outline" disabled className="dark:bg-popover">
+              <Button variant="default" disabled>
                 <ArrowLeft />
                 Previous
               </Button>
@@ -103,16 +276,13 @@ export default function DocumentPage({ params }: DocumentPageProps) {
           <div>
             {nextDoc ? (
               <Link href={`/docs/${nextDoc.category}/${nextDoc.docId}`}>
-                <Button
-                  variant="outline"
-                  className="text-right dark:bg-popover dark:hover:bg-secondary"
-                >
+                <Button variant="default" className="text-right">
                   <ArrowRight />
                   Next
                 </Button>
               </Link>
             ) : (
-              <Button variant="outline" disabled className="dark:bg-popover">
+              <Button variant="default" disabled>
                 <ArrowRight />
                 Next
               </Button>

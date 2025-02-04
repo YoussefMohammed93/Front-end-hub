@@ -99,3 +99,74 @@ export const getDocsByCategory = query({
     return docs;
   },
 });
+
+// Update an existing document
+export const updateDoc = mutation({
+  args: {
+    docId: v.string(),
+    title: v.string(),
+    content: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) throw new Error("User not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("byClerkUserId", (q) => q.eq("clerkUserId", identity.subject))
+      .unique();
+
+    if (!user) throw new Error("User not found");
+
+    const doc = await ctx.db
+      .query("docs")
+      .withIndex("byDocId", (q) => q.eq("docId", args.docId))
+      .unique();
+
+    if (!doc) throw new Error("Document not found");
+
+    if (doc.userId !== user._id)
+      throw new Error("Not authorized to update this document");
+
+    await ctx.db.patch(doc._id, {
+      title: args.title,
+      content: args.content,
+    });
+
+    return await ctx.db.get(doc._id);
+  },
+});
+
+// Delete an existing document
+export const deleteDoc = mutation({
+  args: {
+    docId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) throw new Error("User not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("byClerkUserId", (q) => q.eq("clerkUserId", identity.subject))
+      .unique();
+
+    if (!user) throw new Error("User not found");
+
+    const doc = await ctx.db
+      .query("docs")
+      .withIndex("byDocId", (q) => q.eq("docId", args.docId))
+      .unique();
+
+    if (!doc) throw new Error("Document not found");
+
+    if (doc.userId !== user._id)
+      throw new Error("Not authorized to delete this document");
+
+    await ctx.db.delete(doc._id);
+
+    return { success: true };
+  },
+});
