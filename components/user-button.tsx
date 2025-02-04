@@ -9,18 +9,20 @@ import {
   Sun,
   UserIcon,
 } from "lucide-react";
+
 import {
   DropdownMenu,
-  DropdownMenuContent,
+  DropdownMenuSub,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuPortal,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
   DropdownMenuSeparator,
-  DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import UserAvatar from "./user-avatar";
@@ -28,6 +30,7 @@ import { useTheme } from "next-themes";
 import { useQuery } from "convex/react";
 import { Separator } from "./ui/separator";
 import { api } from "@/convex/_generated/api";
+import { IconBook } from "@tabler/icons-react";
 import { useAuth, useUser } from "@clerk/nextjs";
 
 interface UserButtonProps {
@@ -68,6 +71,14 @@ export default function UserButton({ className }: UserButtonProps) {
             <DropdownMenuItem>
               <Edit className="mr-2 size-4" />
               Create blog
+            </DropdownMenuItem>
+          </Link>
+        )}
+        {userRole === "admin" && (
+          <Link href="/create-docs">
+            <DropdownMenuItem>
+              <IconBook stroke={2} className="size-4 mr-2" />
+              Create Document
             </DropdownMenuItem>
           </Link>
         )}

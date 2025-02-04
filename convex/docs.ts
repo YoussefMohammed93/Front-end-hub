@@ -81,7 +81,7 @@ export const getDoc = query({
     const userId = ctx.db.normalizeId("users", doc.userId);
 
     const user = userId ? await ctx.db.get(userId) : null;
-    
+
     return { ...doc, user };
   },
 });

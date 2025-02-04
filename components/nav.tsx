@@ -52,26 +52,18 @@ export function NavMenu() {
               Documentation
             </h4>
             <SheetClose asChild>
-              <Link
-                href="/docs/introduction"
-                className="px-4 py-2 hover:bg-accent"
-              >
-                Introduction
-              </Link>
-            </SheetClose>
-            <SheetClose asChild>
-              <Link href="/docs/html" className="px-4 py-2 hover:bg-accent">
+              <Link href="/docs/HTML" className="px-4 py-2 hover:bg-accent">
                 HTML
               </Link>
             </SheetClose>
             <SheetClose asChild>
-              <Link href="/docs/css" className="px-4 py-2 hover:bg-accent">
+              <Link href="/docs/CSS" className="px-4 py-2 hover:bg-accent">
                 CSS
               </Link>
             </SheetClose>
             <SheetClose asChild>
               <Link
-                href="/docs/javascript"
+                href="/docs/Javascript"
                 className="px-4 py-2 hover:bg-accent"
               >
                 JavaScript
@@ -108,17 +100,13 @@ export function NavMenu() {
           <NavigationMenuTrigger>Documentation</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid gap-3 p-4 w-[300px] md:w-[400px] lg:grid-cols-[.75fr_1fr]">
-              <ListItem href="/docs/introduction" title="Introduction">
-                Overview of web development, core concepts, and learning
-                pathways.
-              </ListItem>
-              <ListItem href="/docs/html" title="HTML">
+              <ListItem href="/docs/HTML" title="HTML">
                 Semantic markup, structure, and essential HTML5 elements.
               </ListItem>
-              <ListItem href="/docs/css" title="CSS">
+              <ListItem href="/docs/CSS" title="CSS">
                 Styling, layout techniques, responsive design principles.
               </ListItem>
-              <ListItem href="/docs/javascript" title="JavaScript">
+              <ListItem href="/docs/Javascript" title="JavaScript">
                 Core language features, DOM manipulation, modern ES6+ syntax.
               </ListItem>
             </ul>

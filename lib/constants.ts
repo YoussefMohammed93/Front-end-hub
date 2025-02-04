@@ -6,3 +6,5 @@ export const VALID_CATEGORIES = [
   "React.Js",
   "Next.Js",
 ];
+
+export const DOCS_VALID_CATEGORIES = ["HTML", "CSS", "Javascript"];

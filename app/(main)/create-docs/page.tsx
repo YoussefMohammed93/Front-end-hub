@@ -90,7 +90,7 @@ export default function CreateDocsPage() {
       setCategory("");
       setContent("");
 
-      router.push(`/docs/${doc.docId}`);
+      router.push(`/docs/${doc.category}/${doc.docId}`);
     } catch (error) {
       console.error("Error creating document:", error);
       toast.error("Failed to create document. Please try again.");
@@ -161,8 +161,7 @@ export default function CreateDocsPage() {
               <SelectTrigger className="p-3 rounded-lg border focus:ring-2 focus:ring-primary bg-background dark:bg-popover">
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Introduction">Introduction</SelectItem>
+              <SelectContent>c
                 <SelectItem value="HTML">HTML</SelectItem>
                 <SelectItem value="CSS">CSS</SelectItem>
                 <SelectItem value="Javascript">Javascript</SelectItem>
