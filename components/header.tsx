@@ -24,7 +24,7 @@ export const MainHeader = () => {
             whileHover={{ rotate: 360 }}
             transition={{ duration: 1 }}
           />
-          <span className="text-2xl font-bold bg-gradient-to-r from-primary to-sky-600 bg-clip-text text-transparent">
+          <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-sky-600 bg-clip-text text-transparent">
             Frontend Hub
           </span>
         </Link>

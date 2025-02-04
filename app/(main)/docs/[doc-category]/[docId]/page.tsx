@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { toast } from "sonner";
-
+import dynamic from "next/dynamic";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -12,8 +12,6 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
-
-import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
@@ -32,7 +30,7 @@ interface DocumentPageProps {
 }
 
 const LoadingSpinner = () => (
-  <div className="w-full h-screen flex items-center justify-center">
+  <div className="w-full h-[85vh] flex items-center justify-center">
     <Loader2 className="animate-spin" />
   </div>
 );
@@ -127,7 +125,7 @@ export default function DocumentPage({ params }: DocumentPageProps) {
   return (
     <div className="bg-background">
       <div className="px-3 max-w-7xl mx-auto">
-        <div className="mb-8 flex justify-between items-center">
+        <div className="mb-8 flex flex-col sm:flex-row gap-8 sm:gap-0 justify-between sm:items-center">
           <h1 className="text-5xl font-bold text-[#3f3f3f] dark:text-[#cfcfcf] tracking-tighter">
             {doc.title}
           </h1>
@@ -143,7 +141,6 @@ export default function DocumentPage({ params }: DocumentPageProps) {
                     onClick={() => setIsEditDialogOpen(true)}
                   >
                     <Edit />
-                    Edit
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent className="max-w-[370px] sm:max-w-fit max-h-[600px] overflow-x-auto">
@@ -175,7 +172,6 @@ export default function DocumentPage({ params }: DocumentPageProps) {
                       >
                         Content
                       </label>
-                      {/* Reuse your Editor component in edit mode */}
                       <Editor
                         editable={true}
                         onChange={(content) => setEditedContent(content)}
@@ -202,8 +198,6 @@ export default function DocumentPage({ params }: DocumentPageProps) {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-
-              {/* Delete Button */}
               <AlertDialog
                 open={isDeleteDialogOpen}
                 onOpenChange={setIsDeleteDialogOpen}
@@ -214,7 +208,6 @@ export default function DocumentPage({ params }: DocumentPageProps) {
                     onClick={() => setIsDeleteDialogOpen(true)}
                   >
                     <Trash />
-                    Delete
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent className="max-w-[370px] sm:max-w-lg">
@@ -241,7 +234,6 @@ export default function DocumentPage({ params }: DocumentPageProps) {
             </div>
           )}
         </div>
-
         <div className="mb-8">
           <Card className="border-none shadow-none">
             <CardContent className="p-0">
@@ -256,7 +248,6 @@ export default function DocumentPage({ params }: DocumentPageProps) {
             </CardContent>
           </Card>
         </div>
-
         <div className="flex justify-between gap-4 mb-8 flex-wrap">
           <div>
             {previousDoc ? (

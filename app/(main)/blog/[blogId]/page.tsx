@@ -327,47 +327,6 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
           </motion.h1>
           {userRole === "admin" && (
             <div className="flex items-center gap-3 justify-end sm:justify-start">
-              <div>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="icon"
-                      variant="destructive"
-                      onClick={() => setIsDeleteDialogOpen(true)}
-                    >
-                      <Trash className="size-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent className="text-sm">
-                    Delete Blog
-                  </TooltipContent>
-                </Tooltip>
-                <AlertDialog
-                  open={isDeleteDialogOpen}
-                  onOpenChange={setIsDeleteDialogOpen}
-                >
-                  <AlertDialogContent className="max-w-[370px] sm:max-w-lg">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete this blog? This action
-                        cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <Button
-                        variant="outline"
-                        onClick={() => setIsDeleteDialogOpen(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button variant="destructive" onClick={handleDeleteBlog}>
-                        Delete
-                      </Button>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
               <div className="flex items-center gap-3 justify-end sm:justify-start">
                 <AlertDialog
                   open={isEditDialogOpen}
@@ -467,6 +426,47 @@ export default function BlogIdPage({ params }: BlogIdPageProps) {
                         ) : (
                           "Save Changes"
                         )}
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+              <div>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                    >
+                      <Trash className="size-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="text-sm">
+                    Delete Blog
+                  </TooltipContent>
+                </Tooltip>
+                <AlertDialog
+                  open={isDeleteDialogOpen}
+                  onOpenChange={setIsDeleteDialogOpen}
+                >
+                  <AlertDialogContent className="max-w-[370px] sm:max-w-lg">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this blog? This action
+                        cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsDeleteDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button variant="destructive" onClick={handleDeleteBlog}>
+                        Delete
                       </Button>
                     </AlertDialogFooter>
                   </AlertDialogContent>

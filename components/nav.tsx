@@ -83,6 +83,11 @@ export function NavMenu() {
               </Link>
             </SheetClose>
             <SheetClose asChild>
+              <Link href="/resources" className="px-4 py-2 hover:bg-accent">
+                Resources
+              </Link>
+            </SheetClose>
+            <SheetClose asChild>
               <Link href="/about" className="px-4 py-2 hover:bg-accent">
                 About
               </Link>
@@ -97,20 +102,35 @@ export function NavMenu() {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Documentation</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="bg-transparent">Documentation</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-3 p-4 w-[300px] md:w-[400px] lg:grid-cols-[.75fr_1fr]">
+            <ul className="grid gap-4 p-5 w-[320px] md:w-[420px] lg:grid-cols-1">
               <ListItem
-                href="/docs/HTML/daec0498-d989-4c71-d813-61237bc06267"
+                href="/docs/HTML/"
                 title="HTML"
+                className="p-4 border rounded-lg hover:bg-muted transition"
               >
-                Semantic markup, structure, and essential HTML5 elements.
+                <p className="text-sm text-muted-foreground">
+                  Semantic markup, structure, and essential HTML5 elements.
+                </p>
               </ListItem>
-              <ListItem href="/docs/CSS" title="CSS">
-                Styling, layout techniques, responsive design principles.
+              <ListItem
+                href="/docs/CSS"
+                title="CSS"
+                className="p-4 border rounded-lg hover:bg-muted transition"
+              >
+                <p className="text-sm text-muted-foreground">
+                  Styling, layout techniques, responsive design principles.
+                </p>
               </ListItem>
-              <ListItem href="/docs/Javascript" title="JavaScript">
-                Core language features, DOM manipulation, modern ES6+ syntax.
+              <ListItem
+                href="/docs/Javascript"
+                title="JavaScript"
+                className="p-4 border rounded-lg hover:bg-muted transition"
+              >
+                <p className="text-sm text-muted-foreground">
+                  Core language features, DOM manipulation, modern ES6+ syntax.
+                </p>
               </ListItem>
             </ul>
           </NavigationMenuContent>
@@ -126,6 +146,13 @@ export function NavMenu() {
           <Link href="/roadmap" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Roadmap
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link href="/resources" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Resources
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
