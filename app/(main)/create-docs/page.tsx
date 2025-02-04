@@ -161,7 +161,7 @@ export default function CreateDocsPage() {
               <SelectTrigger className="p-3 rounded-lg border focus:ring-2 focus:ring-primary bg-background dark:bg-popover">
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
-              <SelectContent>c
+              <SelectContent>
                 <SelectItem value="HTML">HTML</SelectItem>
                 <SelectItem value="CSS">CSS</SelectItem>
                 <SelectItem value="Javascript">Javascript</SelectItem>

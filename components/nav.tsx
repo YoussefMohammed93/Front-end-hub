@@ -100,7 +100,10 @@ export function NavMenu() {
           <NavigationMenuTrigger>Documentation</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid gap-3 p-4 w-[300px] md:w-[400px] lg:grid-cols-[.75fr_1fr]">
-              <ListItem href="/docs/HTML" title="HTML">
+              <ListItem
+                href="/docs/HTML/daec0498-d989-4c71-d813-61237bc06267"
+                title="HTML"
+              >
                 Semantic markup, structure, and essential HTML5 elements.
               </ListItem>
               <ListItem href="/docs/CSS" title="CSS">
