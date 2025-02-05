@@ -27,11 +27,6 @@ export const MainFooter = () => {
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2 text-muted-foreground">
               <li>
-                <Link href="#faq" className="hover:text-primary">
-                  FAQs
-                </Link>
-              </li>
-              <li>
                 <Link href="/blogs" className="hover:text-primary">
                   Blogs
                 </Link>
@@ -52,11 +47,6 @@ export const MainFooter = () => {
               <li>
                 <Link href="/roadmap" className="hover:text-primary">
                   Roadmap
-                </Link>
-              </li>
-              <li>
-                <Link href="/resources" className="hover:text-primary">
-                  Resources
                 </Link>
               </li>
               <li>
@@ -91,15 +81,6 @@ export const MainFooter = () => {
                   className="hover:text-primary"
                 >
                   Facebook
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="https://www.instagram.com/youssef_mohamed.93"
-                  target="_blank"
-                  className="hover:text-primary"
-                >
-                  Instagram
                 </Link>
               </li>
             </ul>

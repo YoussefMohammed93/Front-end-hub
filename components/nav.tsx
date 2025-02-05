@@ -83,11 +83,6 @@ export function NavMenu() {
               </Link>
             </SheetClose>
             <SheetClose asChild>
-              <Link href="/resources" className="px-4 py-2 hover:bg-accent">
-                Resources
-              </Link>
-            </SheetClose>
-            <SheetClose asChild>
               <Link href="/about" className="px-4 py-2 hover:bg-accent">
                 About
               </Link>
@@ -146,13 +141,6 @@ export function NavMenu() {
           <Link href="/roadmap" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Roadmap
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href="/resources" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Resources
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

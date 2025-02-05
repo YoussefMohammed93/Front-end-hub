@@ -37,7 +37,7 @@ const Editor = dynamic(() => import("@/components/editor"), {
   loading: () => <LoadingSpinner />,
 });
 
-export default function ResourcesPage() {
+export default function RoadmapPage() {
   const { userId } = useAuth();
 
   const [createTitle, setCreateTitle] = useState("");

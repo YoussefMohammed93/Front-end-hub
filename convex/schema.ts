@@ -56,6 +56,7 @@ export default defineSchema({
     .index("byDocId", ["docId"])
     .index("byCategory", ["category"]),
 
+  // This is roadmap
   resources: defineTable({
     resourceId: v.string(),
     title: v.string(),
