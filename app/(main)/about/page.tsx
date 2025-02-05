@@ -20,9 +20,9 @@ import {
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { CodeIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { CodeIcon, Crown } from "lucide-react";
 import { MainHeader } from "@/components/header";
 import { MainFooter } from "@/components/footer";
 import { Progress } from "@/components/ui/progress";
@@ -54,6 +54,19 @@ const techStack = [
     icon: IconBrandNextjs,
   },
 ] as const;
+
+const fadeInUpVariant = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.4, ease: "easeOut" } },
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2 },
+  },
+};
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -127,7 +140,9 @@ export default function About() {
           viewport={{ once: true, margin: "0px 0px -100px 0px" }}
           className="mb-16 sm:mb-20"
         >
-          <Card className="flex flex-col md:flex-row items-center gap-6 p-6 sm:p-8 shadow-none">
+          <Card className="group relative flex flex-col md:flex-row items-center gap-6 p-6 sm:p-8 shadow-none border hover:border-primary/30 transition-all">
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
             <motion.div
               variants={itemVariants}
               className="relative w-48 h-48 rounded-full bg-gradient-to-br from-primary to-accent p-1 overflow-hidden"
@@ -143,7 +158,10 @@ export default function About() {
                 className="object-cover rounded-full"
               />
             </motion.div>
-            <motion.div variants={staggerVariants} className="flex-1">
+            <motion.div
+              variants={staggerVariants}
+              className="flex-1 relative z-10"
+            >
               <CardHeader className="p-2 sm:p-6">
                 <motion.div variants={itemVariants}>
                   <CardTitle className="text-2xl sm:text-3xl">
@@ -180,6 +198,15 @@ export default function About() {
                       {yearsExperience}+ Years Experience
                     </Badge>
                   </motion.div>
+                  <motion.div variants={itemVariants}>
+                    <Badge
+                      variant="gold"
+                      className="flex items-center gap-1 text-xs sm:text-sm"
+                    >
+                      <Crown className="w-4 h-4" />
+                      Owner of Frontend hub
+                    </Badge>
+                  </motion.div>
                 </motion.div>
                 <motion.p
                   variants={itemVariants}
@@ -194,7 +221,7 @@ export default function About() {
             </motion.div>
           </Card>
         </motion.section>
-        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-16 sm:mb-20">
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-14">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -304,7 +331,7 @@ export default function About() {
                         }}
                       >
                         <Progress
-                          value={75}
+                          value={85}
                           className="h-2 sm:h-2.5 bg-secondary"
                         />
                       </motion.div>
@@ -323,7 +350,7 @@ export default function About() {
                         }}
                       >
                         <Progress
-                          value={60}
+                          value={70}
                           className="h-2 sm:h-2.5 bg-secondary"
                         />
                       </motion.div>
@@ -338,14 +365,22 @@ export default function About() {
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
+          transition={{ type: "spring", stiffness: 80, damping: 15 }}
           className="relative overflow-hidden"
+          aria-label="Our Core Mission Section"
         >
-          <Card className="relative border-0">
+          <Card className="relative border-0 dark:border">
             <CardHeader className="pb-4 sm:pb-6">
               <div className="mx-auto mb-4 sm:mb-6 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary/10 flex items-center justify-center">
                 <motion.div
                   animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    type: "spring",
+                    stiffness: 100,
+                    damping: 10,
+                  }}
                 >
                   <FlagIcon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                 </motion.div>
@@ -360,59 +395,65 @@ export default function About() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: { staggerChildren: 0.2 },
-                  },
-                }}
+                variants={containerVariants}
               >
                 <motion.div
-                  variants={{
-                    hidden: { y: 20, opacity: 0 },
-                    visible: { y: 0, opacity: 1 },
-                  }}
-                  className="space-y-4 text-center"
+                  variants={fadeInUpVariant}
+                  className="group relative border overflow-hidden hover:border-primary/30 transition-all shadow-none h-full rounded-xl p-5 dark:bg-popover"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto">
-                    <BookOpenIcon className="w-5 h-5 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold">Structured Learning</h3>
-                  <p className="text-muted-foreground text-sm sm:text-base">
-                    Curated pathways with milestone tracking and progress
-                    validation
-                  </p>
+                  <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <CardHeader className="pb-2 px-4 sm:px-6 relative z-10">
+                    <motion.div className="w-fit p-2 sm:p-3 rounded-lg bg-primary/10">
+                      <BookOpenIcon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                    </motion.div>
+                    <CardTitle className="text-xl sm:text-2xl mt-3 sm:mt-4">
+                      Structured Learning
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-4 sm:px-6 relative z-10">
+                    <p className="text-muted-foreground text-sm sm:text-lg">
+                      Curated pathways with milestone tracking and progress
+                      validation
+                    </p>
+                  </CardContent>
                 </motion.div>
                 <motion.div
-                  variants={{
-                    hidden: { y: 20, opacity: 0 },
-                    visible: { y: 0, opacity: 1 },
-                  }}
-                  className="space-y-4 text-center"
+                  variants={fadeInUpVariant}
+                  className="group relative border overflow-hidden hover:border-primary/30 transition-all shadow-none h-full rounded-xl p-5 dark:bg-popover"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto">
-                    <CodeBracketIcon className="w-5 h-5 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold">Real-World Practice</h3>
-                  <p className="text-muted-foreground text-sm sm:text-base">
-                    Project-based learning with industry-standard requirements
-                  </p>
+                  <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <CardHeader className="pb-2 px-4 sm:px-6 relative z-10">
+                    <motion.div className="w-fit p-2 sm:p-3 rounded-lg bg-primary/10">
+                      <CodeBracketIcon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                    </motion.div>
+                    <CardTitle className="text-xl sm:text-2xl mt-3 sm:mt-4">
+                      Real-World Practice
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-4 sm:px-6 relative z-10">
+                    <p className="text-muted-foreground text-sm sm:text-lg">
+                      Project-based learning with industry-standard requirements
+                    </p>
+                  </CardContent>
                 </motion.div>
                 <motion.div
-                  variants={{
-                    hidden: { y: 20, opacity: 0 },
-                    visible: { y: 0, opacity: 1 },
-                  }}
-                  className="space-y-4 text-center"
+                  variants={fadeInUpVariant}
+                  className="group relative border overflow-hidden hover:border-primary/30 transition-all shadow-none h-full rounded-xl p-5 dark:bg-popover"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto">
-                    <UserGroupIcon className="w-5 h-5 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold">Community Growth</h3>
-                  <p className="text-muted-foreground text-sm sm:text-base">
-                    Collaborative learning environment with peer reviews
-                  </p>
+                  <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <CardHeader className="pb-2 px-4 sm:px-6 relative z-10">
+                    <motion.div className="w-fit p-2 sm:p-3 rounded-lg bg-primary/10">
+                      <UserGroupIcon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                    </motion.div>
+                    <CardTitle className="text-xl sm:text-2xl mt-3 sm:mt-4">
+                      Community Growth
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-4 sm:px-6 relative z-10">
+                    <p className="text-muted-foreground text-sm sm:text-lg">
+                      Collaborative learning environment with peer reviews
+                    </p>
+                  </CardContent>
                 </motion.div>
               </motion.div>
               <div className="mt-8 sm:mt-12 max-w-4xl mx-auto text-center">

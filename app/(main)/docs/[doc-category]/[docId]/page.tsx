@@ -1,8 +1,18 @@
 "use client";
 
+import {
+  ArrowLeft,
+  ArrowRight,
+  Loader2,
+  Edit,
+  Trash,
+  Share2,
+} from "lucide-react";
+
 import Link from "next/link";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
+
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -12,15 +22,16 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
-import { useEffect, useState } from "react";
+
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { MainFooter } from "@/components/footer";
 import { useQuery, useMutation } from "convex/react";
 import { notFound, useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Loader2, Edit, Trash } from "lucide-react";
 
 interface DocumentPageProps {
   params: {
@@ -52,11 +63,21 @@ export default function DocumentPage({ params }: DocumentPageProps) {
   const updateDoc = useMutation(api.docs.updateDoc);
   const deleteDoc = useMutation(api.docs.deleteDoc);
 
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [editedTitle, setEditedTitle] = useState("");
   const [editedContent, setEditedContent] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const handleShare = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success("Document link copied to clipboard");
+    } catch (error) {
+      console.warn(error);
+      toast.error("Failed to copy link");
+    }
+  }, []);
 
   useEffect(() => {
     if (doc && doc.category.toLowerCase() !== category.toLowerCase()) {
@@ -126,113 +147,124 @@ export default function DocumentPage({ params }: DocumentPageProps) {
     <div className="bg-background">
       <div className="px-3 max-w-7xl mx-auto">
         <div className="mb-8 flex flex-col sm:flex-row gap-8 sm:gap-0 justify-between sm:items-center">
-          <h1 className="text-5xl font-bold text-[#3f3f3f] dark:text-[#cfcfcf] tracking-tighter">
+          <h1 className="text-4xl md:text-5xl font-bold text-[#3f3f3f] dark:text-[#cfcfcf] tracking-tighter">
             {doc.title}
           </h1>
-          {userRole === "admin" && (
-            <div className="flex gap-2">
-              <AlertDialog
-                open={isEditDialogOpen}
-                onOpenChange={setIsEditDialogOpen}
+          <div className="flex items-center gap-2">
+            <div>
+              <Badge
+                variant="outline"
+                onClick={handleShare}
+                className="cursor-pointer px-4 py-2.5 text-sm font-medium gap-2 hover:bg-secondary"
               >
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsEditDialogOpen(true)}
-                  >
-                    <Edit />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent className="max-w-[370px] sm:max-w-fit max-h-[600px] overflow-x-auto">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Edit Document</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Update the title and content of your document.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <div className="space-y-4 my-4">
-                    <div>
-                      <label
-                        className="text-sm font-medium mb-1"
-                        htmlFor="doc-title"
-                      >
-                        Title
-                      </label>
-                      <Input
-                        id="doc-title"
-                        type="text"
-                        value={editedTitle}
-                        onChange={(e) => setEditedTitle(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label
-                        className="text-sm font-medium mb-1"
-                        htmlFor="doc-content"
-                      >
-                        Content
-                      </label>
-                      <Editor
-                        editable={true}
-                        onChange={(content) => setEditedContent(content)}
-                        initialContent={editedContent}
-                      />
-                    </div>
-                  </div>
-                  <AlertDialogFooter>
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsEditDialogOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button onClick={handleSave} disabled={isSaving}>
-                      {isSaving ? (
-                        <span className="flex items-center gap-2">
-                          <Loader2 className="animate-spin" /> Saving...
-                        </span>
-                      ) : (
-                        "Save Changes"
-                      )}
-                    </Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-              <AlertDialog
-                open={isDeleteDialogOpen}
-                onOpenChange={setIsDeleteDialogOpen}
-              >
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="destructive"
-                    onClick={() => setIsDeleteDialogOpen(true)}
-                  >
-                    <Trash />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent className="max-w-[370px] sm:max-w-lg">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to delete this document? This action
-                      cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsDeleteDialogOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button variant="destructive" onClick={handleDeleteDoc}>
-                      Delete
-                    </Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                <Share2 className="size-4" />
+              </Badge>
             </div>
-          )}
+            {userRole === "admin" && (
+              <div className="flex gap-2">
+                <AlertDialog
+                  open={isEditDialogOpen}
+                  onOpenChange={setIsEditDialogOpen}
+                >
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsEditDialogOpen(true)}
+                    >
+                      <Edit />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="max-w-[370px] sm:max-w-fit max-h-[600px] overflow-x-auto">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Edit Document</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Update the title and content of your document.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="space-y-4 my-4">
+                      <div>
+                        <label
+                          className="text-sm font-medium mb-1"
+                          htmlFor="doc-title"
+                        >
+                          Title
+                        </label>
+                        <Input
+                          id="doc-title"
+                          type="text"
+                          value={editedTitle}
+                          onChange={(e) => setEditedTitle(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          className="text-sm font-medium mb-1"
+                          htmlFor="doc-content"
+                        >
+                          Content
+                        </label>
+                        <Editor
+                          editable={true}
+                          onChange={(content) => setEditedContent(content)}
+                          initialContent={editedContent}
+                        />
+                      </div>
+                    </div>
+                    <AlertDialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsEditDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button onClick={handleSave} disabled={isSaving}>
+                        {isSaving ? (
+                          <span className="flex items-center gap-2">
+                            <Loader2 className="animate-spin" /> Saving...
+                          </span>
+                        ) : (
+                          "Save Changes"
+                        )}
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                <AlertDialog
+                  open={isDeleteDialogOpen}
+                  onOpenChange={setIsDeleteDialogOpen}
+                >
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="destructive"
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                    >
+                      <Trash />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="max-w-[370px] sm:max-w-lg">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this document? This
+                        action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsDeleteDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button variant="destructive" onClick={handleDeleteDoc}>
+                        Delete
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            )}
+          </div>
         </div>
         <div className="mb-8">
           <Card className="border-none shadow-none">

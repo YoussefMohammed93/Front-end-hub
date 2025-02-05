@@ -61,9 +61,9 @@ export default function Main() {
         "New content is added weekly to keep up with the latest trends and updates in the frontend ecosystem.",
     },
     {
-      question: "Do you offer certifications?",
+      question: "Is the roadmap suitable for beginners?",
       answer:
-        "Yes! We provide completion certificates for all our comprehensive learning paths.",
+        "Yes! Our interactive roadmap is designed to guide beginners step by step, from the basics to advanced frontend development concepts.",
     },
   ];
 

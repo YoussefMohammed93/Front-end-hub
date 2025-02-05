@@ -52,7 +52,7 @@ export function NavMenu() {
               Documentation
             </h4>
             <SheetClose asChild>
-              <Link href="/docs/HTML" className="px-4 py-2 hover:bg-accent">
+              <Link href="/docs/HTML/330dd9c5-9888-4ac8-0828-9f9131ea0f79" className="px-4 py-2 hover:bg-accent">
                 HTML
               </Link>
             </SheetClose>
@@ -106,7 +106,7 @@ export function NavMenu() {
           <NavigationMenuContent>
             <ul className="grid gap-4 p-5 w-[320px] md:w-[420px] lg:grid-cols-1">
               <ListItem
-                href="/docs/HTML/"
+                href="/docs/HTML/330dd9c5-9888-4ac8-0828-9f9131ea0f79"
                 title="HTML"
                 className="p-4 border rounded-lg hover:bg-muted transition"
               >

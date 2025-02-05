@@ -32,13 +32,13 @@ export const MainFooter = () => {
                 </Link>
               </li>
               <li>
-                <Link href="#contact" className="hover:text-primary">
-                  Contact
+                <Link href="/blogs" className="hover:text-primary">
+                  Blogs
                 </Link>
               </li>
               <li>
-                <Link href="/blogs" className="hover:text-primary">
-                  Blogs
+                <Link href="/about" className="hover:text-primary">
+                  About
                 </Link>
               </li>
             </ul>
@@ -55,13 +55,16 @@ export const MainFooter = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/docs" className="hover:text-primary">
-                  Documentation
+                <Link href="/resources" className="hover:text-primary">
+                  Resources
                 </Link>
               </li>
               <li>
-                <Link href="/examples" className="hover:text-primary">
-                  Code Examples
+                <Link
+                  href="/docs/HTML/330dd9c5-9888-4ac8-0828-9f9131ea0f79"
+                  className="hover:text-primary"
+                >
+                  Documentation
                 </Link>
               </li>
             </ul>
@@ -73,17 +76,29 @@ export const MainFooter = () => {
             <h3 className="text-lg font-semibold mb-4">Connect</h3>
             <ul className="space-y-2 text-muted-foreground">
               <li>
-                <Link href="/twitter" className="hover:text-primary">
+                <Link
+                  href="https://www.linkedin.com/in/youssef-mohammed-6893a031b"
+                  target="_blank"
+                  className="hover:text-primary"
+                >
                   Linked in
                 </Link>
               </li>
               <li>
-                <Link href="/github" className="hover:text-primary">
+                <Link
+                  href="https://www.facebook.com/profile.php?id=61552702670893"
+                  target="_blank"
+                  className="hover:text-primary"
+                >
                   Facebook
                 </Link>
               </li>
               <li>
-                <Link href="/discord" className="hover:text-primary">
+                <Link
+                  href="https://www.instagram.com/youssef_mohamed.93"
+                  target="_blank"
+                  className="hover:text-primary"
+                >
                   Instagram
                 </Link>
               </li>
