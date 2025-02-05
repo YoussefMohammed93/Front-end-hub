@@ -55,4 +55,14 @@ export default defineSchema({
     .index("byUserId", ["userId"])
     .index("byDocId", ["docId"])
     .index("byCategory", ["category"]),
+
+  resources: defineTable({
+    resourceId: v.string(),
+    title: v.string(),
+    content: v.string(),
+    userId: v.string(),
+    createdAt: v.number(),
+  })
+    .index("byUserId", ["userId"])
+    .index("byResourceId", ["resourceId"]),
 });

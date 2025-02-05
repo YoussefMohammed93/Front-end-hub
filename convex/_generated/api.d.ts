@@ -16,6 +16,7 @@ import type {
 import type * as blogs from "../blogs.js";
 import type * as docs from "../docs.js";
 import type * as http from "../http.js";
+import type * as resources from "../resources.js";
 import type * as users from "../users.js";
 
 /**
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   blogs: typeof blogs;
   docs: typeof docs;
   http: typeof http;
+  resources: typeof resources;
   users: typeof users;
 }>;
 export declare const api: FilterApi<
