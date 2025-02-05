@@ -24,6 +24,7 @@ import {
 
 import Link from "next/link";
 import Image from "next/image";
+import { useForm } from "@formspree/react";
 
 import {
   Card,
@@ -47,6 +48,9 @@ import { Button } from "@/components/ui/button";
 import { MainFooter } from "@/components/footer";
 import { MainHeader } from "@/components/header";
 import { Textarea } from "@/components/ui/textarea";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 export default function Main() {
   const faqs = [
@@ -100,6 +104,17 @@ export default function Main() {
       badge: "Advanced",
     },
   ];
+
+  const [state, handleSubmit] = useForm("mvgzqgoa");
+
+  useEffect(() => {
+    if (state.succeeded) {
+      toast.success("Message sent successfully!");
+    }
+    if (Array.isArray(state.errors) && state.errors.length > 0) {
+      toast.error("There was an error sending your message.");
+    }
+  }, [state]);
 
   return (
     <div className="min-h-screen relative flex flex-col">
@@ -428,13 +443,14 @@ export default function Main() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <form className="space-y-6">
+                    <form className="space-y-6" onSubmit={handleSubmit}>
                       <motion.div
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
                         className="grid md:grid-cols-2 gap-6"
                       >
                         <Input
+                          name="name"
                           placeholder="Your Name"
                           required
                           minLength={3}
@@ -444,6 +460,7 @@ export default function Main() {
                           className="bg-background dark:bg-background/50"
                         />
                         <Input
+                          name="email"
                           placeholder="Your Email"
                           type="email"
                           required
@@ -458,6 +475,7 @@ export default function Main() {
                         transition={{ delay: 0.1 }}
                       >
                         <Textarea
+                          name="message"
                           placeholder="Your Message"
                           className="h-32 resize-none bg-background dark:bg-background/50"
                           required
@@ -471,9 +489,22 @@ export default function Main() {
                         whileInView={{ scale: 1 }}
                         className="flex justify-end"
                       >
-                        <Button type="submit" className="gap-2">
-                          Send Message
-                          <FiMessageSquare className="h-4 w-4" />
+                        <Button
+                          type="submit"
+                          className="gap-2"
+                          disabled={state.submitting}
+                        >
+                          {state.submitting ? (
+                            <>
+                              <Loader2 />
+                              Sending...
+                            </>
+                          ) : (
+                            <>
+                              Send Message
+                              <FiMessageSquare className="h-4 w-4" />
+                            </>
+                          )}
                         </Button>
                       </motion.div>
                     </form>
