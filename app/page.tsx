@@ -41,16 +41,16 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+import { toast } from "sonner";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MainFooter } from "@/components/footer";
 import { MainHeader } from "@/components/header";
 import { Textarea } from "@/components/ui/textarea";
-import { useEffect } from "react";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
 
 export default function Main() {
   const faqs = [
@@ -255,7 +255,7 @@ export default function Main() {
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 100, delay: 0.5 }}
                 >
-                  <Link href="/blogs">
+                  <Link href="/roadmap">
                     <Button size="lg">
                       <span className="flex items-center gap-2">
                         Start Learning Now
@@ -496,7 +496,7 @@ export default function Main() {
                         >
                           {state.submitting ? (
                             <>
-                              <Loader2 />
+                              <Loader2 className="animate-spin" />
                               Sending...
                             </>
                           ) : (

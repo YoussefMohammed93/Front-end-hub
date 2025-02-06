@@ -51,7 +51,7 @@ export const MainFooter = () => {
               </li>
               <li>
                 <Link
-                  href="/docs/HTML/330dd9c5-9888-4ac8-0828-9f9131ea0f79"
+                  href="/docs/HTML/84ff8ff7-bb43-46e9-4408-4596987b0f7b"
                   className="hover:text-primary"
                 >
                   Documentation

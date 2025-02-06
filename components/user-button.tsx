@@ -7,7 +7,6 @@ import {
   Monitor,
   Moon,
   Sun,
-  UserIcon,
 } from "lucide-react";
 
 import {
@@ -60,12 +59,6 @@ export default function UserButton({ className }: UserButtonProps) {
           Logged in as @{currentUser.user?.fullName}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href={`/users/${currentUser.user?.id}`}>
-          <DropdownMenuItem>
-            <UserIcon className="mr-2 size-4" />
-            Profile
-          </DropdownMenuItem>
-        </Link>
         {userRole === "admin" && (
           <Link href="/create-blog">
             <DropdownMenuItem>

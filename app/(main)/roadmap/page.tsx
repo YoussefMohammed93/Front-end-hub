@@ -214,7 +214,7 @@ export default function RoadmapPage() {
                 open={isDeleteDialogOpen}
                 onOpenChange={setIsDeleteDialogOpen}
               >
-                <AlertDialogContent className="max-w-[370px]">
+                <AlertDialogContent className="max-w-[370px] sm:max-w-lg">
                   <AlertDialogHeader>
                     <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
                     <AlertDialogDescription>
