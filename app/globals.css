@@ -124,3 +124,131 @@
 [cmdk-group-heading] {
   @apply px-4 py-2 text-xs font-medium text-muted-foreground;
 }
+
+.bn-editor th,
+.bn-editor td {
+  border: 2px solid #ddd !important;
+  padding: 5px 10px !important;
+}
+
+.dark .bn-editor td,
+.dark .bn-editor th {
+  border: 2px solid #2a2a2a !important;
+  padding: 5px 10px !important;
+}
+
+[data-background-color="green"] {
+  background: #edf3ec;
+}
+
+.dark [data-background-color="green"] {
+  background: #243d30;
+}
+
+[data-text-color="green"] {
+  color: #448361;
+}
+
+.dark [data-text-color="green"] {
+  color: #3e8f71;
+}
+
+[data-background-color="yellow"] {
+  background: #fff4d5;
+}
+
+.dark [data-background-color="yellow"] {
+  background: #795e38;
+}
+
+[data-text-color="yellow"] {
+  color: #cf9e00;
+}
+
+.dark [data-text-color="yellow"] {
+  color: #e7b000;
+}
+
+[data-background-color="blue"] {
+  background-color: #dae3e7;
+}
+
+.dark [data-background-color="blue"] {
+  background: #143a4e;
+}
+
+[data-text-color="blue"] {
+  color: #0f97d2;
+}
+
+.dark [data-text-color="blue"] {
+  color: #0f97d2;
+}
+
+[data-background-color="red"] {
+  background: #ffe6e6;
+}
+
+.dark [data-background-color="red"] {
+  background: #522e2a;
+}
+
+.dark [data-background-color="gray"] {
+  background: #2f2f2f;
+}
+
+[data-text-color="red"] {
+  color: #e45353;
+}
+
+.dark [data-text-color="red"] {
+  color: #bb4747;
+}
+
+[data-background-color="brown"] {
+  background: #e3d6d0;
+}
+
+.dark [data-background-color="brown"] {
+  background: #2f2f2f;
+}
+
+[data-text-color="brown"] {
+  color: #8c563d;
+}
+
+.dark [data-text-color="brown"] {
+  color: #a26e55;
+}
+
+[data-background-color="orange"] {
+  background: #6a4021;
+}
+
+[data-text-color="orange"] {
+  color: #de8225;
+}
+
+.dark [data-background-color="orange"] {
+  background: #6a4021;
+}
+
+.dark [data-text-color="orange"] {
+  color: #cd6b07;
+}
+
+[data-background-color="pink"] {
+  background: #fee5f3;
+}
+
+.dark [data-background-color="pink"] {
+  background: #6430495e;
+}
+
+[data-text-color="pink"] {
+  color: #b51e79;
+}
+
+.dark [data-text-color="pink"] {
+  color: #c45195;
+}

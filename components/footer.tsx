@@ -9,7 +9,7 @@ export const MainFooter = () => {
       viewport={{ once: true }}
       className="border-t"
     >
-      <div className="pt-8">
+      <div className="bg-background pt-8">
         <div className="grid grid-cols-2 md:grid-cols-4 place-items-start md:place-items-center max-w-7xl mx-auto gap-8 px-4 sm:px-6 md:px-8 text-sm">
           <motion.div
             initial={{ opacity: 0, x: -20 }}

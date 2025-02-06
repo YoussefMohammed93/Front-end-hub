@@ -15,7 +15,7 @@ import {
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import { useAuth } from "@clerk/nextjs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
@@ -23,31 +23,31 @@ import { Button } from "@/components/ui/button";
 import { MainHeader } from "@/components/header";
 import { MainFooter } from "@/components/footer";
 import { useQuery, useMutation } from "convex/react";
-import { Edit, Loader2, Trash } from "lucide-react";
+import { Edit, Loader2, Share2, Trash } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
-const LoadingSpinner = () => (
-  <div className="w-full h-[85vh] flex items-center justify-center">
-    <Loader2 className="animate-spin" />
-  </div>
-);
-
+// Inline Loader2 for the dynamic Editor import
 const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
-  loading: () => <LoadingSpinner />,
+  loading: () => (
+    <div className="w-full h-[85vh] flex items-center justify-center">
+      <Loader2 className="animate-spin" />
+    </div>
+  ),
 });
 
 export default function RoadmapPage() {
   const { userId } = useAuth();
 
   const [createTitle, setCreateTitle] = useState("");
-  const [createContent, setCreateContent] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [createContent, setCreateContent] = useState("");
 
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editedTitle, setEditedTitle] = useState("");
-  const [editedContent, setEditedContent] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [editedTitle, setEditedTitle] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedContent, setEditedContent] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const userRole = useQuery(api.users.getUserRole);
@@ -57,12 +57,30 @@ export default function RoadmapPage() {
   const updateResourceMutation = useMutation(api.resources.updateResource);
   const deleteResourceMutation = useMutation(api.resources.deleteResource);
 
+  const handleShare = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success("Roadmap link copied to clipboard");
+    } catch (error) {
+      console.warn(error);
+      toast.error("Failed to copy link");
+    }
+  }, []);
+
   useEffect(() => {
     if (resource) {
       setEditedTitle(resource.title);
       setEditedContent(resource.content);
     }
   }, [resource]);
+
+  if (userRole === undefined || resource === undefined) {
+    return (
+      <div className="w-full h-[85vh] flex items-center justify-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
+  }
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,18 +154,25 @@ export default function RoadmapPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/95">
+    <div className="min-h-screen bg-popover">
       <MainHeader />
-      <div className="max-w-7xl mx-auto px-5 sm:px-10 sm:p-8 mb-12">
+      <div className="max-w-7xl mx-auto px-5 sm:px-10 sm:p-8 mb-12 bg-popover">
         {resource ? (
           <>
             {userRole === "admin" ? (
               !isEditMode ? (
                 <div className="flex justify-between items-center mb-6">
-                  <h1 className="text-4xl font-bold text-[#3f3f3f] dark:text-[#cfcfcf]">
+                  <h1 className="text-4xl font-bold text-[#3f3f3f] dark:text-[#d6dad8]">
                     {resource.title}
                   </h1>
                   <div className="flex gap-2">
+                    <Badge
+                      variant="outline"
+                      onClick={handleShare}
+                      className="cursor-pointer px-4 py-2.5 text-sm font-medium gap-2 hover:bg-secondary"
+                    >
+                      <Share2 className="size-4" />
+                    </Badge>
                     <Button
                       variant="outline"
                       onClick={() => setIsEditMode(true)}
@@ -184,10 +209,17 @@ export default function RoadmapPage() {
                 </div>
               )
             ) : (
-              <div className="flex justify-start items-center mb-6">
-                <h1 className="text-4xl font-bold text-[#3f3f3f] dark:text-[#cfcfcf]">
+              <div className="flex justify-between items-center mb-6">
+                <h1 className="text-4xl font-bold text-[#3f3f3f] dark:text-[#d6dad8]">
                   {resource.title}
                 </h1>
+                <Badge
+                  variant="outline"
+                  onClick={handleShare}
+                  className="cursor-pointer px-4 py-2.5 text-sm font-medium gap-2 hover:bg-secondary"
+                >
+                  <Share2 className="size-4" />
+                </Badge>
               </div>
             )}
             <Card className="shadow-none border-none">
@@ -218,7 +250,7 @@ export default function RoadmapPage() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete this resource? This action
+                      Are you sure you want to delete this Roadmap? This action
                       cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
@@ -244,11 +276,11 @@ export default function RoadmapPage() {
           >
             <div className="space-y-3">
               <Label htmlFor="title" className="text-lg font-semibold">
-                Resource Title
+                Roadmap Title
               </Label>
               <Input
                 id="title"
-                placeholder="Enter resource title..."
+                placeholder="Enter Roadmap title..."
                 type="text"
                 value={createTitle}
                 onChange={(e) => setCreateTitle(e.target.value)}
@@ -274,7 +306,7 @@ export default function RoadmapPage() {
                 {isCreating ? (
                   <Loader2 className="animate-spin" />
                 ) : (
-                  "Create Resource"
+                  "Create Roadmap"
                 )}
               </Button>
             </div>
@@ -288,7 +320,7 @@ export default function RoadmapPage() {
           background: white !important;
         }
         :global(.dark .bn-block-group) {
-          background: #0c0a09 !important;
+          background: #171717 !important;
         }
       `}</style>
     </div>
