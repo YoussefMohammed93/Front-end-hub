@@ -1,13 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import {
   Sidebar,
   SidebarGroup,
   SidebarContent,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar";
+
+import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 import { useQuery } from "convex/react";
 import { usePathname } from "next/navigation";
 import { api } from "@/convex/_generated/api";
@@ -16,8 +18,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function WebsiteSidebar() {
   const pathname = usePathname();
   const docs = useQuery(api.docs.getAllDocs);
-
   const categories = ["HTML", "CSS", "Javascript"];
+
+  useEffect(() => {
+    if (docs) {
+      const activeLink = document.querySelector('a[data-active="true"]');
+      if (activeLink) {
+        activeLink.scrollIntoView({ block: "nearest", behavior: "auto" });
+      }
+    }
+  }, [docs, pathname]);
 
   return (
     <Sidebar>
@@ -59,6 +69,7 @@ export function WebsiteSidebar() {
                               <Link
                                 key={doc._id}
                                 href={docPath}
+                                data-active={isActive}
                                 className={cn(
                                   "block px-2 py-1 border-l-4 border-transparent text-sm transition-colors text-foreground/80 hover:text-foreground",
                                   isActive

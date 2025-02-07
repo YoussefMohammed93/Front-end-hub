@@ -92,7 +92,7 @@ export const RandomBlogs = () => {
                       </div>
                       <Badge
                         variant="secondary"
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 mt-1"
                       >
                         <Heart className="size-4 text-red-500" />
                         <span className="font-medium">{blog.likes}</span>

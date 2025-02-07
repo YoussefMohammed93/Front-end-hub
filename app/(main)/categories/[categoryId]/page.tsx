@@ -125,7 +125,7 @@ export default function CategoryPage() {
 
         <motion.div className="text-center mb-10">
           <Badge variant="secondary" className="ml-4 text-sm font-medium">
-            {results.length} articles
+            {results.length} blogs
           </Badge>
         </motion.div>
 
@@ -203,7 +203,7 @@ export default function CategoryPage() {
                             </div>
                             <Badge
                               variant="secondary"
-                              className="flex items-center gap-2"
+                              className="flex items-center gap-2 mt-1"
                             >
                               <Heart className="size-4 text-red-500" />
                               <span className="font-medium">{blog.likes}</span>
