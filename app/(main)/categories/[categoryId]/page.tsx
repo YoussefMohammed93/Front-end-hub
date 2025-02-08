@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Link from "next/link";
@@ -12,9 +13,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Clock, Heart } from "lucide-react";
 import { useQuery } from "convex/react";
-import { useState, useEffect } from "react";
+import { Clock, Heart } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ import { VALID_CATEGORIES } from "@/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const containerVariants = {
@@ -52,6 +53,75 @@ const itemVariants = {
 
 const ITEMS_PER_PAGE = 8;
 
+const BlogCard = React.memo(function BlogCard({ blog }: { blog: any }) {
+  return (
+    <motion.div
+      key={blog.blogId}
+      variants={itemVariants}
+      layout
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.2 }}
+    >
+      <Link href={`/blog/${blog.blogId}`}>
+        <Card className="h-full shadow-none relative overflow-hidden group">
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"
+            transition={{ duration: 0.4 }}
+          />
+          <CardHeader className="p-0 relative">
+            <div
+              className="relative overflow-hidden"
+              style={{ aspectRatio: "4 / 3" }}
+            >
+              <Image
+                src={blog.coverImage}
+                alt={blog.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
+            </div>
+            <Badge className="absolute top-2 left-2 z-10">
+              {blog.category}
+            </Badge>
+          </CardHeader>
+          <CardContent className="p-4 space-y-2">
+            <motion.div
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <CardTitle className="line-clamp-2 text-lg font-semibold relative z-10">
+                {blog.title}
+              </CardTitle>
+            </motion.div>
+            <motion.div initial={{ opacity: 0.8 }} whileHover={{ opacity: 1 }}>
+              <p className="text-muted-foreground line-clamp-3 text-sm relative z-10">
+                {blog.description}
+              </p>
+            </motion.div>
+            <div className="flex items-center justify-between text-sm text-muted-foreground mt-4">
+              <div className="flex items-center gap-2">
+                <Clock className="size-4" />
+                <span className="font-medium text-foreground/80">
+                  {format(new Date(blog.createdAt), "MMM dd, yyyy")}
+                </span>
+              </div>
+              <Badge
+                variant="secondary"
+                className="flex items-center gap-2 mt-1"
+              >
+                <Heart className="size-4 text-red-500" />
+                <span className="font-medium">{blog.likes}</span>
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
+    </motion.div>
+  );
+});
+
 export default function CategoryPage() {
   const params = useParams();
   const router = useRouter();
@@ -68,44 +138,22 @@ export default function CategoryPage() {
     category: categoryId,
   });
 
-  const totalPages = results?.length
-    ? Math.ceil(results.length / ITEMS_PER_PAGE)
-    : 0;
+  const isLoading = !results;
 
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedBlogs = results?.slice(startIndex, endIndex) || [];
+  const totalPages = useMemo(() => {
+    return results?.length ? Math.ceil(results.length / ITEMS_PER_PAGE) : 0;
+  }, [results]);
 
-  const handlePageChange = (newPage: number) => {
+  const paginatedBlogs = useMemo(() => {
+    if (!results) return [];
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return results.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [results, currentPage]);
+
+  const handlePageChange = useCallback((newPage: number) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setCurrentPage(newPage);
-  };
-
-  if (!results) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <MainHeader />
-        <div className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(ITEMS_PER_PAGE)].map((_, i) => (
-              <Card key={i} className="shadow-none rounded-lg">
-                <Skeleton className="aspect-video rounded-b-none" />
-                <CardContent className="p-4 space-y-2">
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-4 w-full" />
-                  <div className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-1/3" />
-                    <Skeleton className="h-4 w-8" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-        <MainFooter />
-      </div>
-    );
-  }
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -122,14 +170,32 @@ export default function CategoryPage() {
         >
           {categoryId} Blogs
         </motion.h1>
-
         <motion.div className="text-center mb-10">
-          <Badge variant="secondary" className="ml-4 text-sm font-medium">
-            {results.length} blogs
-          </Badge>
+          {isLoading ? (
+            <Skeleton className="h-6 w-20 inline-block" />
+          ) : (
+            <Badge variant="secondary" className="ml-4 text-sm font-medium">
+              {results.length} blogs
+            </Badge>
+          )}
         </motion.div>
-
-        {results.length === 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(ITEMS_PER_PAGE)].map((_, i) => (
+              <Card key={i} className="shadow-none rounded-lg">
+                <Skeleton className="aspect-video rounded-b-none" />
+                <CardContent className="p-4 space-y-2">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-1/3" />
+                    <Skeleton className="h-4 w-8" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : results.length === 0 ? (
           <motion.div
             variants={itemVariants}
             className="text-center text-muted-foreground"
@@ -141,82 +207,10 @@ export default function CategoryPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               <AnimatePresence mode="wait">
                 {paginatedBlogs.map((blog) => (
-                  <motion.div
-                    key={blog.blogId}
-                    variants={itemVariants}
-                    layout
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Link href={`/blog/${blog.blogId}`}>
-                      <Card className="h-full shadow-none relative overflow-hidden group">
-                        <motion.div
-                          className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                          transition={{ duration: 0.4 }}
-                        />
-
-                        <CardHeader className="p-0 relative">
-                          <div
-                            className="relative overflow-hidden"
-                            style={{ aspectRatio: 4 / 3 }}
-                          >
-                            <Image
-                              src={blog.coverImage}
-                              alt={blog.title}
-                              fill
-                              className="object-cover"
-                              priority
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                          </div>
-                          <Badge className="absolute top-2 left-2 z-10">
-                            {blog.category}
-                          </Badge>
-                        </CardHeader>
-                        <CardContent className="p-4 space-y-2">
-                          <motion.div
-                            animate={{ scale: 1 }}
-                            transition={{ type: "spring", stiffness: 400 }}
-                          >
-                            <CardTitle className="line-clamp-2 text-lg font-semibold relative z-10">
-                              {blog.title}
-                            </CardTitle>
-                          </motion.div>
-                          <motion.div
-                            initial={{ opacity: 0.8 }}
-                            whileHover={{ opacity: 1 }}
-                          >
-                            <p className="text-muted-foreground line-clamp-3 text-sm relative z-10">
-                              {blog.description}
-                            </p>
-                          </motion.div>
-                          <div className="flex items-center justify-between text-sm text-muted-foreground mt-4">
-                            <div className="flex items-center gap-2">
-                              <Clock className="size-4" />
-                              <span className="font-medium text-foreground/80">
-                                {format(
-                                  new Date(blog.createdAt),
-                                  "MMM dd, yyyy"
-                                )}
-                              </span>
-                            </div>
-                            <Badge
-                              variant="secondary"
-                              className="flex items-center gap-2 mt-1"
-                            >
-                              <Heart className="size-4 text-red-500" />
-                              <span className="font-medium">{blog.likes}</span>
-                            </Badge>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  </motion.div>
+                  <BlogCard key={blog.blogId} blog={blog} />
                 ))}
               </AnimatePresence>
             </div>
-
             {totalPages > 1 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -235,7 +229,6 @@ export default function CategoryPage() {
                         <PaginationPrevious />
                       </Button>
                     </PaginationItem>
-
                     {Array.from({ length: totalPages }, (_, i) => {
                       const page = i + 1;
                       if (
@@ -261,8 +254,8 @@ export default function CategoryPage() {
                       ) {
                         return <PaginationEllipsis key={page} />;
                       }
+                      return null;
                     })}
-
                     <PaginationItem>
                       <Button
                         variant="ghost"

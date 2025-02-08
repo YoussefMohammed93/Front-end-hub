@@ -25,8 +25,10 @@ export const RandomBlogs = () => {
 
   if (!initialized) {
     return (
-      <div className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-        <Loader2 className="size-5 animate-spin" />
+      <div className="flex items-center justify-center flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        <div>
+          <Loader2 className="size-5 animate-spin" />
+        </div>
       </div>
     );
   }
