@@ -3,9 +3,11 @@
 import {
   FiArrowRight,
   FiAward,
+  FiCode,
   FiMail,
   FiMessageSquare,
   FiRefreshCcw,
+  FiUsers,
 } from "react-icons/fi";
 
 import {
@@ -173,14 +175,29 @@ export default function Main() {
                   animate={{ scale: 1 }}
                   className="flex justify-center gap-2 sm:gap-3 flex-wrap"
                 >
-                  <div className="flex items-center gap-2 cursor-default bg-primary/10 text-primary dark:text-primary/90 dark:bg-secondary/50 px-4 py-2 rounded-full text-sm font-medium transition-all hover:bg-primary/20">
-                    <FiAward className="h-4 w-4" />
-                    Certified Curriculum
-                  </div>
-                  <div className="flex items-center gap-2 cursor-default bg-primary/10 text-primary dark:text-primary/90 dark:bg-secondary/50 px-4 py-2 rounded-full text-sm font-medium transition-all hover:bg-primary/20">
-                    <FiRefreshCcw className="h-4 w-4" />
-                    Updated 2025
-                  </div>
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="flex justify-center gap-2 sm:gap-3 flex-wrap"
+                  >
+                    {[
+                      { icon: FiAward, text: "Certified Curriculum" },
+                      { icon: FiRefreshCcw, text: "Updated 2025" },
+                      { icon: FiCode, text: "20+ Practical Labs" },
+                      { icon: FiUsers, text: "Mentor Support" },
+                    ].map((item, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 * i }}
+                        className="flex items-center gap-2 cursor-default bg-background/80 backdrop-blur-sm border border-primary/20 text-primary dark:text-primary/90 px-4 py-2 rounded-full text-sm font-medium transition-all hover:bg-primary/10 hover:border-primary/30 shadow-sm hover:shadow-primary/10"
+                      >
+                        <item.icon className="h-4 w-4" />
+                        {item.text}
+                      </motion.div>
+                    ))}
+                  </motion.div>
                 </motion.div>
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
@@ -255,7 +272,7 @@ export default function Main() {
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 100, delay: 0.5 }}
                 >
-                  <Link href="/roadmap">
+                  <Link href="/docs/HTML/84ff8ff7-bb43-46e9-4408-4596987b0f7b">
                     <Button size="lg">
                       <span className="flex items-center gap-2">
                         Start Learning Now
@@ -371,7 +388,7 @@ export default function Main() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="py-10"
+            className="py-10 relative"
           >
             <div className="px-4 sm:px-6 lg:px-8">
               <motion.h2
@@ -406,6 +423,22 @@ export default function Main() {
                 </Accordion>
               </div>
             </div>
+            <motion.div
+              className="hidden md:block absolute top-20 left-20 size-16 bg-primary/70 rounded-full blur-lg"
+              animate={{
+                scale: [1, 1.5, 1],
+                opacity: [0.4, 0.8, 0.4],
+              }}
+              transition={{ duration: 3, repeat: Infinity }}
+            />
+            <motion.div
+              className="hidden md:block absolute bottom-10 right-20 size-16 bg-primary/50 rounded-full blur-lg"
+              animate={{
+                y: [0, -40, 0],
+                opacity: [0.4, 0.8, 0.4],
+              }}
+              transition={{ duration: 4, repeat: Infinity }}
+            />
           </motion.section>
 
           {/* Contact Section */}

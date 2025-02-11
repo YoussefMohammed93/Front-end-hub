@@ -7,6 +7,8 @@ import {
   IconBrandJavascript,
   IconBrandNextjs,
   IconBrandReact,
+  IconBrandBootstrap,
+  IconBrandGithub,
 } from "@tabler/icons-react";
 
 import {
@@ -46,6 +48,14 @@ const techStack = [
     icon: IconBrandTailwind,
   },
   {
+    name: "BootStrap",
+    icon: IconBrandBootstrap,
+  },
+  {
+    name: "Github",
+    icon: IconBrandGithub,
+  },
+  {
     name: "React",
     icon: IconBrandReact,
   },
@@ -54,19 +64,6 @@ const techStack = [
     icon: IconBrandNextjs,
   },
 ] as const;
-
-const fadeInUpVariant = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.4, ease: "easeOut" } },
-};
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.2 },
-  },
-};
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -98,7 +95,7 @@ export default function About() {
   const [yearsExperience, setYearsExperience] = useState(0);
 
   useEffect(() => {
-    const startDate = new Date(2023, 0, 1);
+    const startDate = new Date(2022, 0, 1);
     const currentDate = new Date();
     const years = currentDate.getFullYear() - startDate.getFullYear();
     setYearsExperience(years);
@@ -113,24 +110,24 @@ export default function About() {
       className="min-h-screen bg-background text-foreground"
     >
       <MainHeader />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
         <motion.div
           variants={staggerVariants}
           initial="hidden"
           animate="visible"
-          className="text-center mb-12 sm:mb-16"
+          className="text-center mb-16"
         >
           <motion.h1
             variants={itemVariants}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-sky-600 bg-clip-text text-transparent leading-tight"
+            className="text-4xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-sky-600 bg-clip-text text-transparent leading-tight"
           >
             About Frontend Hub
           </motion.h1>
           <motion.p
             variants={itemVariants}
-            className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mt-3 sm:mt-5"
+            className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto mt-6 font-light"
           >
-            Your comprehensive roadmap to mastering modern frontend development
+            Empowering developers with modern tools and practical knowledge
           </motion.p>
         </motion.div>
         <motion.section
@@ -138,334 +135,247 @@ export default function About() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "0px 0px -100px 0px" }}
-          className="mb-16 sm:mb-20"
+          className="mb-20"
         >
-          <Card className="group relative flex flex-col md:flex-row items-center gap-6 p-6 sm:p-8 shadow-none border hover:border-primary/30 transition-all">
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-            <motion.div
-              variants={itemVariants}
-              className="relative w-48 h-48 rounded-full bg-gradient-to-br from-primary to-accent p-1 overflow-hidden"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <Image
-                src="/me.svg"
-                alt="Youssef Mohammed"
-                width={192}
-                height={192}
-                priority
-                className="object-cover rounded-full"
-              />
-            </motion.div>
-            <motion.div
-              variants={staggerVariants}
-              className="flex-1 relative z-10"
-            >
-              <CardHeader className="p-2 sm:p-6">
+          <Card className="group relative overflow-hidden border hover:border-primary/30 transition-colors bg-card/50 backdrop-blur-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="flex flex-col md:flex-row items-center gap-8 p-8 group-hover:bg-primary/5 transition-colors">
+              <motion.div
+                variants={itemVariants}
+                className="relative w-52 h-52 rounded-2xl bg-gradient-to-br from-primary to-accent p-1.5"
+                whileHover={{ scale: 1.03 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 blur-xl" />
+                <Image
+                  src="/me.svg"
+                  alt="Youssef Mohammed"
+                  width={208}
+                  height={208}
+                  priority
+                  className="object-cover rounded-2xl"
+                />
+              </motion.div>
+              <motion.div
+                variants={staggerVariants}
+                className="flex-1 space-y-4"
+              >
                 <motion.div variants={itemVariants}>
-                  <CardTitle className="text-2xl sm:text-3xl">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                     Youssef Mohammed
-                  </CardTitle>
+                  </h2>
                 </motion.div>
-              </CardHeader>
-              <CardContent className="p-2 sm:p-6">
                 <motion.div
                   variants={staggerVariants}
-                  className="flex flex-wrap gap-2 mb-4"
+                  className="flex flex-wrap gap-3"
                 >
-                  <motion.div variants={itemVariants}>
-                    <Badge className="flex items-center gap-1 text-xs sm:text-sm">
-                      <AcademicCapIcon className="w-4 h-4" />
-                      Computer Science Student
-                    </Badge>
-                  </motion.div>
-                  <motion.div variants={itemVariants}>
-                    <Badge
-                      variant="outline"
-                      className="flex items-center gap-1 text-xs sm:text-sm"
-                    >
-                      <CodeIcon className="w-4 h-4" />
-                      Front End Developer
-                    </Badge>
-                  </motion.div>
-                  <motion.div variants={itemVariants}>
-                    <Badge
-                      variant="secondary"
-                      className="flex items-center gap-1 text-xs sm:text-sm"
-                    >
-                      <ClockIcon className="w-4 h-4" />
-                      {yearsExperience}+ Years Experience
-                    </Badge>
-                  </motion.div>
-                  <motion.div variants={itemVariants}>
-                    <Badge
-                      variant="gold"
-                      className="flex items-center gap-1 text-xs sm:text-sm"
-                    >
-                      <Crown className="w-4 h-4" />
-                      Owner of Frontend hub
-                    </Badge>
-                  </motion.div>
-                </motion.div>
-                <motion.p
-                  variants={itemVariants}
-                  className="text-muted-foreground leading-relaxed text-sm sm:text-base"
-                >
-                  A 19-year-old frontend enthusiast from Mansoura University,
-                  Egypt. Dedicated to creating quality educational content that
-                  bridges the gap between academic theory and real-world
-                  development.
-                </motion.p>
-              </CardContent>
-            </motion.div>
-          </Card>
-        </motion.section>
-        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-14">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <Card className="group relative overflow-hidden hover:border-primary/30 transition-all shadow-none h-full">
-              <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardHeader className="pb-2 px-4 sm:px-6">
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="w-fit p-2 sm:p-3 rounded-lg bg-primary/10"
-                >
-                  <CodeBracketIcon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-                </motion.div>
-                <CardTitle className="text-xl sm:text-2xl mt-3 sm:mt-4">
-                  Comprehensive Documentation
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-4 sm:px-6">
-                <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-lg">
-                  Master web development fundamentals with our interactive
-                  guides. Learn HTML, CSS, and JavaScript through clear
-                  tutorials and real-world projects. We simplify complex
-                  concepts, blending theory with hands-on practice. Explore best
-                  practices and essential tools to build responsive, dynamic
-                  websites with confidence.
-                </p>
-                <motion.div
-                  className="flex flex-wrap gap-2 mt-auto"
-                  initial="hidden"
-                  animate="visible"
-                  variants={{
-                    hidden: { opacity: 0 },
-                    visible: {
-                      opacity: 1,
-                      transition: { staggerChildren: 0.1 },
+                  {[
+                    {
+                      icon: AcademicCapIcon,
+                      label: "Computer Science Student",
                     },
-                  }}
-                >
-                  {techStack.map((tech, index) => (
-                    <motion.div
-                      key={index}
-                      variants={{
-                        hidden: { y: 20, opacity: 0 },
-                        visible: { y: 0, opacity: 1 },
-                      }}
-                    >
-                      <Badge
-                        variant="outline"
-                        className="gap-1 rounded-lg font-medium text-xs"
-                      >
-                        <tech.icon className="w-3 h-3 sm:w-4 sm:h-4" />
-                        {tech.name}
+                    { icon: CodeIcon, label: "Frontend Developer" },
+                    { icon: ClockIcon, label: `${yearsExperience}+ Years Exp` },
+                    { icon: Crown, label: "Founder" },
+                  ].map((item, index) => (
+                    <motion.div key={index} variants={itemVariants}>
+                      <Badge className="gap-2 px-4 py-2 rounded-full bg-primary/10 hover:bg-primary/15 border border-primary/20 text-foreground">
+                        <item.icon className="w-4 h-4 text-primary" />
+                        {item.label}
                       </Badge>
                     </motion.div>
                   ))}
                 </motion.div>
-              </CardContent>
+                <motion.p
+                  variants={itemVariants}
+                  className="text-muted-foreground leading-relaxed text-lg font-light"
+                >
+                  Passionate 19-year-old developer from Egypt bridging academic
+                  theory with real-world application through immersive learning
+                  experiences and cutting-edge curriculum design.
+                </motion.p>
+              </motion.div>
+            </div>
+          </Card>
+        </motion.section>
+        <div className="grid md:grid-cols-2 gap-8 mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="space-y-8"
+          >
+            <Card className="relative overflow-hidden border hover:border-primary/30 transition-colors bg-card/50 backdrop-blur-sm">
+              <div className="p-8 group-hover:bg-primary/10 transition-colors">
+                <CardHeader className="pb-0">
+                  <div className="mb-6 flex items-center gap-4">
+                    <div className="p-3 rounded-xl bg-primary/10">
+                      <CodeBracketIcon className="w-8 h-8 text-primary" />
+                    </div>
+                    <CardTitle className="text-2xl">
+                      Modern Tech Stack
+                    </CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <p className="text-muted-foreground text-lg font-light">
+                    Master industry-standard tools through project-based
+                    learning and interactive documentation.
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    {techStack.map((tech, index) => (
+                      <Badge
+                        key={index}
+                        variant="outline"
+                        className="gap-2 px-4 py-2 rounded-full border-primary/20 bg-primary/5"
+                      >
+                        <tech.icon className="w-5 h-5 text-primary" />
+                        {tech.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </div>
+            </Card>
+            <Card className="relative overflow-hidden border hover:border-primary/30 transition-colors bg-card/50 backdrop-blur-sm">
+              <div className="p-8 group-hover:bg-primary/10 transition-colors">
+                <CardHeader className="pb-0">
+                  <div className="mb-6 flex items-center gap-4">
+                    <div className="p-3 rounded-xl bg-primary/10">
+                      <BookOpenIcon className="w-8 h-8 text-primary" />
+                    </div>
+                    <CardTitle className="text-2xl">
+                      Learning Pathways
+                    </CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    {[
+                      { label: "Core Fundamentals", value: 90 },
+                      { label: "Advanced Concepts", value: 75 },
+                      { label: "Project Readiness", value: 85 },
+                    ].map((item, index) => (
+                      <div key={index}>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-muted-foreground">
+                            {item.label}
+                          </span>
+                          <span className="text-primary font-medium">
+                            {item.value}%
+                          </span>
+                        </div>
+                        <Progress
+                          value={item.value}
+                          className="h-2.5 bg-primary/10"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </div>
             </Card>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative"
           >
-            <Card className="group relative overflow-hidden hover:border-primary/30 transition-all shadow-none h-full">
-              <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardHeader className="pb-2 px-4 sm:px-6">
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="w-fit p-2 sm:p-3 rounded-lg bg-primary/10"
-                >
-                  <BookOpenIcon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-                </motion.div>
-                <CardTitle className="text-xl sm:text-2xl mt-3 sm:mt-4">
-                  Expert-curated Resources
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-4 sm:px-6">
-                <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-lg">
-                  Stay updated with in-depth tutorials and industry insights on
-                  cutting-edge frontend technologies.
-                </p>
-                <div className="space-y-4 sm:space-y-6">
-                  <motion.div
-                    className="space-y-4"
-                    initial="hidden"
-                    animate="visible"
-                    variants={{
-                      hidden: { opacity: 0 },
-                      visible: {
-                        opacity: 1,
-                        transition: { staggerChildren: 0.2 },
+            <Card className="h-full border hover:border-primary/30 transition-colors bg-card/50 backdrop-blur-sm">
+              <div className="p-5 sm:p-8 group-hover:bg-primary/10 transition-colors">
+                <CardContent className="p-0 space-y-8">
+                  <div className="space-y-2">
+                    <FlagIcon className="w-8 h-8 text-primary mb-4" />
+                    <h3 className="text-3xl font-bold">Our Philosophy</h3>
+                    <p className="text-muted-foreground text-lg font-light">
+                      Bridging the gap between theoretical knowledge and
+                      professional implementation through immersive learning
+                      experiences.
+                    </p>
+                  </div>
+                  <div className="space-y-6">
+                    {[
+                      {
+                        icon: UserGroupIcon,
+                        title: "Community First",
+                        content:
+                          "Collaborative environment with peer reviews and mentorship",
                       },
-                    }}
-                  >
-                    <div>
-                      <div className="flex justify-between mb-2 sm:mb-3">
-                        <h4 className="font-semibold text-sm sm:text-base">
-                          Learning Progress
-                        </h4>
-                      </div>
+                      {
+                        icon: CodeIcon,
+                        title: "Real-World Focus",
+                        content:
+                          "Project-based curriculum mirroring industry standards",
+                      },
+                      {
+                        icon: AcademicCapIcon,
+                        title: "Progressive Learning",
+                        content: "Structured pathways with milestone tracking",
+                      },
+                      {
+                        icon: FlagIcon,
+                        title: "Career Support",
+                        content:
+                          "Resume reviews, interview prep, and job placement guidance",
+                      },
+                    ].map((item, index) => (
                       <motion.div
-                        variants={{
-                          hidden: { width: 0 },
-                          visible: { width: "100%" },
-                        }}
+                        key={index}
+                        className="flex gap-4 p-4 rounded-xl bg-popover/50 border hover:border-primary/30 transition-colors group"
                       >
-                        <Progress
-                          value={85}
-                          className="h-2 sm:h-2.5 bg-secondary"
-                        />
+                        <div className="flex items-center justify-center p-4 px-5 sm:px-4 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                          <item.icon className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-semibold">
+                            {item.title}
+                          </h4>
+                          <p className="text-muted-foreground font-light">
+                            {item.content}
+                          </p>
+                        </div>
                       </motion.div>
-                    </div>
-
-                    <div>
-                      <div className="flex justify-between mb-2 sm:mb-3">
-                        <h4 className="font-semibold text-sm sm:text-base">
-                          Advanced Concepts
-                        </h4>
-                      </div>
-                      <motion.div
-                        variants={{
-                          hidden: { width: 0 },
-                          visible: { width: "100%" },
-                        }}
-                      >
-                        <Progress
-                          value={70}
-                          className="h-2 sm:h-2.5 bg-secondary"
-                        />
-                      </motion.div>
-                    </div>
-                  </motion.div>
-                </div>
-              </CardContent>
+                    ))}
+                  </div>
+                </CardContent>
+              </div>
             </Card>
           </motion.div>
         </div>
         <motion.section
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ type: "spring", stiffness: 80, damping: 15 }}
-          className="relative overflow-hidden"
-          aria-label="Our Core Mission Section"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="grid md:grid-cols-3 gap-6"
         >
-          <Card className="relative border-0 dark:border">
-            <CardHeader className="pb-4 sm:pb-6">
-              <div className="mx-auto mb-4 sm:mb-6 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary/10 flex items-center justify-center">
-                <motion.div
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    type: "spring",
-                    stiffness: 100,
-                    damping: 10,
-                  }}
-                >
-                  <FlagIcon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-                </motion.div>
+          {[
+            { value: "1000+", label: "Active Learners", icon: UserGroupIcon },
+            { value: "50+", label: "Learning Hours", icon: BookOpenIcon },
+            { value: "95%", label: "Satisfaction Rate", icon: Crown },
+          ].map((stat, index) => (
+            <Card
+              key={index}
+              className="group relative border hover:border-primary/30 transition-colors bg-card/50 backdrop-blur-sm"
+            >
+              <div className="absolute inset-0 bg-gradient-to-b from-primary/5 rounded-xl to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="p-6 group-hover:bg-primary/5 transition-colors">
+                <CardContent className="p-0 flex items-center gap-6">
+                  <div className="p-4 rounded-xl bg-primary/10">
+                    <stat.icon className="w-7 h-7 text-primary" />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-3xl font-bold text-primary">
+                      {stat.value}
+                    </div>
+                    <div className="text-muted-foreground font-light">
+                      {stat.label}
+                    </div>
+                  </div>
+                </CardContent>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-serif tracking-tight text-center">
-                Our Core Mission
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="px-4 sm:px-8 pb-6 sm:pb-8">
-              <motion.div
-                className="grid gap-6 sm:gap-8 md:grid-cols-3"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={containerVariants}
-              >
-                <motion.div
-                  variants={fadeInUpVariant}
-                  className="group relative border overflow-hidden hover:border-primary/30 transition-all shadow-none h-full rounded-xl p-5 dark:bg-popover"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <CardHeader className="pb-2 px-4 sm:px-6 relative z-10">
-                    <motion.div className="w-fit p-2 sm:p-3 rounded-lg bg-primary/10">
-                      <BookOpenIcon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-                    </motion.div>
-                    <CardTitle className="text-xl sm:text-2xl mt-3 sm:mt-4">
-                      Structured Learning
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-4 sm:px-6 relative z-10">
-                    <p className="text-muted-foreground text-sm sm:text-lg">
-                      Curated pathways with milestone tracking and progress
-                      validation
-                    </p>
-                  </CardContent>
-                </motion.div>
-                <motion.div
-                  variants={fadeInUpVariant}
-                  className="group relative border overflow-hidden hover:border-primary/30 transition-all shadow-none h-full rounded-xl p-5 dark:bg-popover"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <CardHeader className="pb-2 px-4 sm:px-6 relative z-10">
-                    <motion.div className="w-fit p-2 sm:p-3 rounded-lg bg-primary/10">
-                      <CodeBracketIcon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-                    </motion.div>
-                    <CardTitle className="text-xl sm:text-2xl mt-3 sm:mt-4">
-                      Real-World Practice
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-4 sm:px-6 relative z-10">
-                    <p className="text-muted-foreground text-sm sm:text-lg">
-                      Project-based learning with industry-standard requirements
-                    </p>
-                  </CardContent>
-                </motion.div>
-                <motion.div
-                  variants={fadeInUpVariant}
-                  className="group relative border overflow-hidden hover:border-primary/30 transition-all shadow-none h-full rounded-xl p-5 dark:bg-popover"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <CardHeader className="pb-2 px-4 sm:px-6 relative z-10">
-                    <motion.div className="w-fit p-2 sm:p-3 rounded-lg bg-primary/10">
-                      <UserGroupIcon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-                    </motion.div>
-                    <CardTitle className="text-xl sm:text-2xl mt-3 sm:mt-4">
-                      Community Growth
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-4 sm:px-6 relative z-10">
-                    <p className="text-muted-foreground text-sm sm:text-lg">
-                      Collaborative learning environment with peer reviews
-                    </p>
-                  </CardContent>
-                </motion.div>
-              </motion.div>
-              <div className="mt-8 sm:mt-12 max-w-4xl mx-auto text-center">
-                <p className="text-sm sm:text-base lg:text-lg leading-relaxed text-muted-foreground">
-                  We empower developers through immersive learning experiences
-                  that combine cutting-edge curriculum with practical
-                  application, bridging the gap between theoretical knowledge
-                  and professional implementation.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+            </Card>
+          ))}
         </motion.section>
       </main>
       <MainFooter />
