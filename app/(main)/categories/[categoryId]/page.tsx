@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { format } from "date-fns";
 import {
   Pagination,
   PaginationContent,
@@ -13,6 +10,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+
+import Link from "next/link";
+import Image from "next/image";
+import { format } from "date-fns";
 import { useQuery } from "convex/react";
 import { Clock, Heart } from "lucide-react";
 import { api } from "@/convex/_generated/api";
@@ -22,10 +23,22 @@ import { MainHeader } from "@/components/header";
 import { MainFooter } from "@/components/footer";
 import { VALID_CATEGORIES } from "@/lib/constants";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+interface Blog {
+  blogId: string;
+  coverImage: string;
+  title: string;
+  description: string;
+  category?: string;
+  createdAt: string;
+  likes: number;
+}
+
+const ITEMS_PER_PAGE = 8;
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -51,9 +64,7 @@ const itemVariants = {
   },
 };
 
-const ITEMS_PER_PAGE = 8;
-
-const BlogCard = React.memo(function BlogCard({ blog }: { blog: any }) {
+const BlogCard = React.memo(function BlogCard({ blog }: { blog: Blog }) {
   return (
     <motion.div
       key={blog.blogId}
@@ -126,7 +137,7 @@ export default function CategoryPage() {
   const params = useParams();
   const router = useRouter();
   const categoryId = params.categoryId as string;
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
     if (!VALID_CATEGORIES.includes(categoryId)) {
@@ -134,26 +145,65 @@ export default function CategoryPage() {
     }
   }, [categoryId, router]);
 
-  const results = useQuery(api.blogs.getBlogsByCategory, {
+  const rawBlogs = useQuery(api.blogs.getBlogsByCategory, {
     category: categoryId,
   });
 
-  const isLoading = !results;
+  const blogs: Blog[] | undefined = useMemo(() => {
+    return rawBlogs?.map((blog) => ({
+      ...blog,
+      createdAt: new Date(blog.createdAt).toISOString(),
+    }));
+  }, [rawBlogs]);
 
-  const totalPages = useMemo(() => {
-    return results?.length ? Math.ceil(results.length / ITEMS_PER_PAGE) : 0;
-  }, [results]);
+  const totalPages = useMemo(
+    () =>
+      blogs && blogs.length > 0 ? Math.ceil(blogs.length / ITEMS_PER_PAGE) : 0,
+    [blogs]
+  );
+
+  useEffect(() => {
+    if (totalPages > 0 && currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
+
+  const isLoading = !blogs;
 
   const paginatedBlogs = useMemo(() => {
-    if (!results) return [];
+    if (!blogs) return [];
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return results.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [results, currentPage]);
+    return blogs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [blogs, currentPage]);
 
-  const handlePageChange = useCallback((newPage: number) => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    setCurrentPage(newPage);
-  }, []);
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      if (newPage < 1 || newPage > totalPages) return;
+      setCurrentPage(newPage);
+    },
+    [totalPages]
+  );
+
+  const paginationItems = useMemo(() => {
+    const pages: (number | string)[] = [];
+    const delta = 2;
+    for (let page = 1; page <= totalPages; page++) {
+      if (
+        page === 1 ||
+        page === totalPages ||
+        (page >= currentPage - delta && page <= currentPage + delta)
+      ) {
+        pages.push(page);
+      } else if (pages[pages.length - 1] !== "...") {
+        pages.push("...");
+      }
+    }
+    return pages;
+  }, [currentPage, totalPages]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -175,14 +225,14 @@ export default function CategoryPage() {
             <Skeleton className="h-6 w-20 inline-block" />
           ) : (
             <Badge variant="secondary" className="ml-4 text-sm font-medium">
-              {results.length} blogs
+              {blogs.length} blogs
             </Badge>
           )}
         </motion.div>
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(ITEMS_PER_PAGE)].map((_, i) => (
-              <Card key={i} className="shadow-none rounded-lg">
+            {Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
+              <Card key={index} className="shadow-none rounded-lg">
                 <Skeleton className="aspect-video rounded-b-none" />
                 <CardContent className="p-4 space-y-2">
                   <Skeleton className="h-6 w-3/4" />
@@ -195,7 +245,7 @@ export default function CategoryPage() {
               </Card>
             ))}
           </div>
-        ) : results.length === 0 ? (
+        ) : blogs.length === 0 ? (
           <motion.div
             variants={itemVariants}
             className="text-center text-muted-foreground"
@@ -229,33 +279,21 @@ export default function CategoryPage() {
                         <PaginationPrevious />
                       </Button>
                     </PaginationItem>
-                    {Array.from({ length: totalPages }, (_, i) => {
-                      const page = i + 1;
-                      if (
-                        page === 1 ||
-                        page === totalPages ||
-                        (page >= currentPage - 1 && page <= currentPage + 1)
-                      ) {
-                        return (
-                          <PaginationItem key={page}>
-                            <PaginationLink
-                              isActive={page === currentPage}
-                              className="rounded-lg cursor-pointer h-10 w-10"
-                              onClick={() => handlePageChange(page)}
-                            >
-                              {page}
-                            </PaginationLink>
-                          </PaginationItem>
-                        );
-                      }
-                      if (
-                        page === currentPage - 2 ||
-                        page === currentPage + 2
-                      ) {
-                        return <PaginationEllipsis key={page} />;
-                      }
-                      return null;
-                    })}
+                    {paginationItems.map((item, index) =>
+                      typeof item === "number" ? (
+                        <PaginationItem key={index}>
+                          <PaginationLink
+                            isActive={item === currentPage}
+                            className="rounded-lg cursor-pointer h-10 w-10"
+                            onClick={() => handlePageChange(item)}
+                          >
+                            {item}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ) : (
+                        <PaginationEllipsis key={index} />
+                      )
+                    )}
                     <PaginationItem>
                       <Button
                         variant="ghost"

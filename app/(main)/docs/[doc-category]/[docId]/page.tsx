@@ -1,5 +1,4 @@
 "use client";
-
 import {
   ArrowLeft,
   ArrowRight,
@@ -8,11 +7,9 @@ import {
   Trash,
   Share2,
 } from "lucide-react";
-
 import Link from "next/link";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
-
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -22,7 +19,6 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
-
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { api } from "@/convex/_generated/api";
@@ -30,8 +26,8 @@ import { Button } from "@/components/ui/button";
 import { MainFooter } from "@/components/footer";
 import { useQuery, useMutation } from "convex/react";
 import { notFound, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface DocumentPageProps {
   params: {
@@ -40,7 +36,15 @@ interface DocumentPageProps {
   };
 }
 
-const LoadingSpinner = () => (
+interface DocumentData {
+  _id: string;
+  docId: string;
+  title: string;
+  content: string;
+  category: string;
+}
+
+const LoadingSpinner: React.FC = () => (
   <div className="w-full h-[85vh] flex items-center justify-center">
     <Loader2 className="animate-spin" />
   </div>
@@ -56,10 +60,9 @@ export default function DocumentPage({ params }: DocumentPageProps) {
   const { docId, "doc-category": category } = params;
 
   const userRole = useQuery(api.users.getUserRole);
+  const doc = useQuery(api.docs.getDoc, { docId }) as DocumentData | undefined;
 
-  const doc = useQuery(api.docs.getDoc, { docId });
-  const allDocs = useQuery(api.docs.getAllDocs);
-
+  const allDocs = useQuery(api.docs.getAllDocs) as DocumentData[] | undefined;
   const updateDoc = useMutation(api.docs.updateDoc);
   const deleteDoc = useMutation(api.docs.deleteDoc);
 
@@ -68,16 +71,6 @@ export default function DocumentPage({ params }: DocumentPageProps) {
   const [editedContent, setEditedContent] = useState("");
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
-  const handleShare = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      toast.success("Document link copied to clipboard");
-    } catch (error) {
-      console.warn(error);
-      toast.error("Failed to copy link");
-    }
-  }, []);
 
   useEffect(() => {
     if (doc && doc.category.toLowerCase() !== category.toLowerCase()) {
@@ -92,28 +85,19 @@ export default function DocumentPage({ params }: DocumentPageProps) {
     }
   }, [doc]);
 
-  if (doc === undefined) {
-    return <LoadingSpinner />;
-  }
-  if (!doc) {
-    notFound();
-  }
+  const currentCategoryDocs = useMemo(() => {
+    return (allDocs || []).filter((d) =>
+      doc ? d.category.toLowerCase() === doc.category.toLowerCase() : false
+    );
+  }, [allDocs, doc]);
 
-  const currentCategoryDocs = (allDocs || []).filter(
-    (d) => d.category === doc.category
-  );
-  const currentIndex = currentCategoryDocs.findIndex((d) => d._id === doc._id);
-  const previousDoc =
-    currentIndex > 0 ? currentCategoryDocs[currentIndex - 1] : null;
-  const nextDoc =
-    currentIndex < currentCategoryDocs.length - 1
-      ? currentCategoryDocs[currentIndex + 1]
-      : null;
+  const currentIndex = useMemo(() => {
+    return doc ? currentCategoryDocs.findIndex((d) => d._id === doc._id) : -1;
+  }, [currentCategoryDocs, doc]);
 
-  const handleDeleteDoc = async () => {
+  const handleDeleteDoc = useCallback(async () => {
     try {
       await deleteDoc({ docId });
-
       toast.success("Document deleted successfully!");
       router.push("/");
     } catch (error) {
@@ -122,9 +106,9 @@ export default function DocumentPage({ params }: DocumentPageProps) {
     } finally {
       setIsDeleteDialogOpen(false);
     }
-  };
+  }, [docId, deleteDoc, router]);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     setIsSaving(true);
     try {
       await updateDoc({
@@ -132,7 +116,6 @@ export default function DocumentPage({ params }: DocumentPageProps) {
         title: editedTitle,
         content: editedContent,
       });
-
       toast.success("Document updated successfully!");
       setIsEditDialogOpen(false);
     } catch (error) {
@@ -141,8 +124,22 @@ export default function DocumentPage({ params }: DocumentPageProps) {
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [docId, editedTitle, editedContent, updateDoc]);
 
+  if (doc === undefined) {
+    return <LoadingSpinner />;
+  }
+
+  if (!doc) {
+    return null;
+  }
+  const previousDoc =
+    currentIndex > 0 ? currentCategoryDocs[currentIndex - 1] : null;
+
+  const nextDoc =
+    currentIndex < currentCategoryDocs.length - 1
+      ? currentCategoryDocs[currentIndex + 1]
+      : null;
   return (
     <div className="bg-background">
       <div className="px-3 max-w-7xl mx-auto">
@@ -151,15 +148,23 @@ export default function DocumentPage({ params }: DocumentPageProps) {
             {doc.title}
           </h1>
           <div className="flex items-center gap-2">
-            <div>
-              <Badge
-                variant="outline"
-                onClick={handleShare}
-                className="cursor-pointer px-4 py-2.5 text-sm font-medium gap-2 hover:bg-secondary"
-              >
-                <Share2 className="size-4" />
-              </Badge>
-            </div>
+            <Badge
+              variant="outline"
+              onClick={() => {
+                navigator.clipboard
+                  .writeText(window.location.href)
+                  .then(() => {
+                    toast.success("Document link copied to clipboard");
+                  })
+                  .catch((error) => {
+                    console.warn(error);
+                    toast.error("Failed to copy link");
+                  });
+              }}
+              className="cursor-pointer px-4 py-2.5 text-sm font-medium gap-2 hover:bg-secondary"
+            >
+              <Share2 className="size-4" />
+            </Badge>
             {userRole === "admin" && (
               <div className="flex gap-2">
                 <AlertDialog
