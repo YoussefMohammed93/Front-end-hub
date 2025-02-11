@@ -45,9 +45,9 @@ export const MainFooter = () => {
             <h3 className="text-lg font-semibold mb-4">Resources</h3>
             <ul className="space-y-2 text-muted-foreground">
               <li>
-                <Link href="/roadmap" className="hover:text-primary">
+                <a href="/roadmap.svg" className="hover:text-primary" download>
                   Roadmap
-                </Link>
+                </a>
               </li>
               <li>
                 <Link

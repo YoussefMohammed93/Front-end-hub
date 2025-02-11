@@ -52,12 +52,18 @@ export function NavMenu() {
               Documentation
             </h4>
             <SheetClose asChild>
-              <Link href="/docs/HTML/84ff8ff7-bb43-46e9-4408-4596987b0f7b" className="px-4 py-2 hover:bg-accent">
+              <Link
+                href="/docs/HTML/84ff8ff7-bb43-46e9-4408-4596987b0f7b"
+                className="px-4 py-2 hover:bg-accent"
+              >
                 HTML
               </Link>
             </SheetClose>
             <SheetClose asChild>
-              <Link href="/docs/CSS/fc834763-c1fe-4427-e9c1-5f59f4fe93a1" className="px-4 py-2 hover:bg-accent">
+              <Link
+                href="/docs/CSS/fc834763-c1fe-4427-e9c1-5f59f4fe93a1"
+                className="px-4 py-2 hover:bg-accent"
+              >
                 CSS
               </Link>
             </SheetClose>
@@ -78,9 +84,13 @@ export function NavMenu() {
               </Link>
             </SheetClose>
             <SheetClose asChild>
-              <Link href="/roadmap" className="px-4 py-2 hover:bg-accent">
+              <a
+                href="/roadmap.svg"
+                download
+                className="px-4 py-2 hover:bg-accent"
+              >
                 Roadmap
-              </Link>
+              </a>
             </SheetClose>
             <SheetClose asChild>
               <Link href="/about" className="px-4 py-2 hover:bg-accent">
@@ -97,7 +107,9 @@ export function NavMenu() {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent">Documentation</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="bg-transparent">
+            Documentation
+          </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid gap-4 p-5 w-[320px] md:w-[420px] lg:grid-cols-1">
               <ListItem
@@ -138,11 +150,13 @@ export function NavMenu() {
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/roadmap" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Roadmap
-            </NavigationMenuLink>
-          </Link>
+          <a
+            href="/roadmap.svg"
+            download
+            className={navigationMenuTriggerStyle()}
+          >
+            Roadmap
+          </a>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link href="/about" legacyBehavior passHref>
