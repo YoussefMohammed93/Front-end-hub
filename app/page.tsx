@@ -132,6 +132,7 @@ export default function Main() {
             width={200}
             height={200}
             alt="vector"
+            loading="lazy"
             className="opacity-10 sm:opacity-20"
           />
         </motion.div>
@@ -146,6 +147,7 @@ export default function Main() {
             width={200}
             height={200}
             alt="vector"
+            loading="lazy"
             className="opacity-10 sm:opacity-20 rotate-180"
           />
         </motion.div>

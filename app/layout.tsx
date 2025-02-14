@@ -5,9 +5,9 @@ import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 import { ClerkProvider } from "@clerk/nextjs";
 import { EdgeStoreProvider } from "@/lib/edgestore";
+import ScrollButton from "@/components/scroll-button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConvexClientProvider } from "./convex-client-provider";
-import ScrollButton from "@/components/scroll-button";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -23,7 +23,8 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Frontend hub",
-  description: "Frontend blogs website by ENG : Youssef Mohammed",
+  description:
+    "Frontend Hub empowers aspiring frontend developers with immersive, project-based learning and a modern tech stack. Founded by Youssef Mohammed, we bridge academic theory and real-world application through a supportive community and interactive curriculum.",
 };
 
 export default function RootLayout({

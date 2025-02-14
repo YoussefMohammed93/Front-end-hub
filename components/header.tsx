@@ -20,6 +20,7 @@ export const MainHeader = () => {
           <motion.img
             src="../logo.svg"
             alt="logo"
+            loading="eager"
             className="size-10 group-hover:scale-110 transition-transform"
             whileHover={{ rotate: 360 }}
             transition={{ duration: 1 }}
