@@ -3,7 +3,6 @@
 import {
   FiArrowRight,
   FiAward,
-  FiCode,
   FiMail,
   FiMessageSquare,
   FiRefreshCcw,
@@ -183,7 +182,6 @@ export default function Main() {
                     {[
                       { icon: FiAward, text: "Certified Curriculum" },
                       { icon: FiRefreshCcw, text: "Updated 2025" },
-                      { icon: FiCode, text: "20+ Practical Labs" },
                       { icon: FiUsers, text: "Mentor Support" },
                     ].map((item, i) => (
                       <motion.div

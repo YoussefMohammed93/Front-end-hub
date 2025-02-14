@@ -31,7 +31,7 @@ const ScrollButton = () => {
 
   return (
     <button
-      className={`fixed cursor-pointer flex z-50 items-center justify-center border-none size-14 rounded-full text-2xl bottom-4 transition-all bg-primary opacity-75 hover:opacity-100 duration-300 ${
+      className={`fixed cursor-pointer flex z-50 items-center justify-center border-none size-12 text-2xl bottom-4 transition-all bg-primary opacity-75 hover:opacity-100 duration-300 ${
         showButton ? "right-6" : "-right-16"
       }`}
       onClick={scrollToTop}

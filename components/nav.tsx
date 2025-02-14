@@ -69,7 +69,7 @@ export function NavMenu() {
             </SheetClose>
             <SheetClose asChild>
               <Link
-                href="/docs/Javascript"
+                href="/docs/Javascript/31590e14-8053-42e5-5e1a-623cc40bb1d1"
                 className="px-4 py-2 hover:bg-accent"
               >
                 JavaScript
@@ -131,7 +131,7 @@ export function NavMenu() {
                 </p>
               </ListItem>
               <ListItem
-                href="/docs/Javascript"
+                href="/docs/Javascript/31590e14-8053-42e5-5e1a-623cc40bb1d1"
                 title="JavaScript"
                 className="p-4 border rounded-lg hover:bg-muted transition"
               >
